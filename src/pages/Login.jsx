@@ -2,31 +2,43 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useNavigate } from 'react-router-dom';
-import { User, Lock, ArrowRight } from 'lucide-react';
+import { User, Lock, ArrowRight, Mail, AlertCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Login = () => {
-    const { login } = useAuth();
+    const { login, signup } = useAuth();
     const { t } = useLanguage();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [isSignUp, setIsSignUp] = useState(false);
-    const [name, setName] = useState('');
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        password: ''
+    });
+    const [error, setError] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!name && isSignUp) return;
-
+        setError('');
         setLoading(true);
+
         try {
-            // In a real app, we'd pass credentials. For now, we pass the name entered.
-            const displayName = name || 'Farmer';
-            await login(displayName);
+            if (isSignUp) {
+                await signup(formData);
+            } else {
+                await login(formData.email, formData.password);
+            }
             navigate('/');
         } catch (err) {
-            console.error(err);
+            setError(err.message === 'User already exists' ? 'Account already exists' : t('login.invalid_creds'));
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     return (
@@ -35,19 +47,41 @@ const Login = () => {
             <div className="absolute top-[-10%] left-[-10%] w-64 h-64 bg-agri-green-100 rounded-full blur-3xl opacity-60"></div>
             <div className="absolute bottom-[-10%] right-[-10%] w-80 h-80 bg-orange-100 rounded-full blur-3xl opacity-60"></div>
 
-            <div className="w-20 h-20 bg-agri-green-100 rounded-3xl flex items-center justify-center mb-6 text-3xl shadow-sm z-10 border border-agri-green-200">🌱</div>
+            <motion.div
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="w-20 h-20 bg-agri-green-100 rounded-3xl flex items-center justify-center mb-6 text-3xl shadow-sm z-10 border border-agri-green-200"
+            >
+                🌱
+            </motion.div>
+
             <h1 className="text-3xl font-black text-agri-green-700 mb-2 z-10">{t('common.app_name')}</h1>
             <p className="text-gray-500 mb-8 text-center z-10 font-medium">{t('login.protect_crops')}</p>
 
             <form onSubmit={handleSubmit} className="w-full max-w-xs z-10 space-y-4">
+                <AnimatePresence mode="wait">
+                    {error && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="bg-red-50 text-red-600 p-4 rounded-2xl flex items-center gap-3 text-xs font-bold border border-red-100"
+                        >
+                            <AlertCircle size={16} />
+                            {error}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
                 {isSignUp && (
                     <div className="relative">
                         <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                         <input
                             type="text"
+                            name="name"
                             placeholder={t('login.full_name')}
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            value={formData.name}
+                            onChange={handleChange}
                             required
                             className="w-full bg-gray-50 border border-gray-100 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-agri-green-500 focus:bg-white transition-all font-medium text-gray-700"
                         />
@@ -55,10 +89,27 @@ const Login = () => {
                 )}
 
                 <div className="relative">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                        type="email"
+                        name="email"
+                        placeholder={t('login.email')}
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-agri-green-500 focus:bg-white transition-all font-medium text-gray-700"
+                    />
+                </div>
+
+                <div className="relative">
                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                     <input
                         type="password"
-                        placeholder="••••••••"
+                        name="password"
+                        placeholder={t('login.password')}
+                        value={formData.password}
+                        onChange={handleChange}
+                        required
                         className="w-full bg-gray-50 border border-gray-100 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-agri-green-500 focus:bg-white transition-all font-medium text-gray-700"
                     />
                 </div>
@@ -86,7 +137,10 @@ const Login = () => {
             </form>
 
             <button
-                onClick={() => setIsSignUp(!isSignUp)}
+                onClick={() => {
+                    setIsSignUp(!isSignUp);
+                    setError('');
+                }}
                 className="mt-6 text-sm font-bold text-agri-green-600 hover:text-agri-green-700 active:scale-95 transition-all z-10"
             >
                 {isSignUp ? t('login.have_account') : t('login.no_account')}

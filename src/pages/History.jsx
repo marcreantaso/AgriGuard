@@ -14,20 +14,20 @@ const History = () => {
         {
             date: t('history.today'),
             items: [
-                { id: 101, crop: 'Rice', disease: 'Blast', status: 'critical', time: '10:30 AM', img: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=150&h=150' }
+                { id: 101, crop: 'Rice', disease: 'Rice Blast', status: 'critical', time: '10:30 AM', img: 'https://images.unsplash.com/photo-1536633100230-67440bce326f?auto=format&fit=crop&q=80&w=200&h=200' }
             ]
         },
         {
             date: t('history.yesterday'),
             items: [
-                { id: 102, crop: 'Corn', disease: 'Healthy', status: 'healthy', time: '02:15 PM', img: 'https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&q=80&w=150&h=150' },
-                { id: 103, crop: 'Tomato', disease: 'Blight', status: 'mild', time: '09:45 AM', img: 'https://images.unsplash.com/photo-1592878904946-b3cd8ae243d0?auto=format&fit=crop&q=80&w=150&h=150' }
+                { id: 102, crop: 'Palay', disease: 'Healthy', status: 'healthy', time: '02:15 PM', img: 'https://images.unsplash.com/photo-1594488311340-983f47e2463e?auto=format&fit=crop&q=80&w=200&h=200' },
+                { id: 103, crop: 'Rice', disease: 'Leaf Blight', status: 'mild', time: '09:45 AM', img: 'https://images.unsplash.com/photo-1536633345484-cf950942e61a?auto=format&fit=crop&q=80&w=200&h=200' }
             ]
         },
         {
             date: t('history.earlier'),
             items: [
-                { id: 104, crop: 'Rice', disease: 'Tungro', status: 'critical', time: 'Feb 5, 2026', img: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&q=80&w=150&h=150' }
+                { id: 104, crop: 'Rice', disease: 'Tungro Virus', status: 'critical', time: 'Feb 5, 2026', img: 'https://images.unsplash.com/photo-1510461876527-316886e8869c?auto=format&fit=crop&q=80&w=200&h=200' }
             ]
         }
     ];
@@ -71,7 +71,7 @@ const History = () => {
                                             <div className="flex items-center gap-2 mb-1">
                                                 <h4 className="font-bold text-gray-900">{scan.disease}</h4>
                                                 <span className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-tighter ${scan.status === 'healthy' ? 'bg-green-100 text-green-600' :
-                                                        scan.status === 'critical' ? 'bg-red-100 text-red-600' : 'bg-orange-100 text-orange-600'
+                                                    scan.status === 'critical' ? 'bg-red-100 text-red-600' : 'bg-orange-100 text-orange-600'
                                                     }`}>
                                                     {scan.status}
                                                 </span>
