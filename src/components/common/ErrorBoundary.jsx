@@ -1,5 +1,5 @@
 import React from 'react';
-import { TriangleAlert, Home } from 'lucide-react';
+import { AlertTriangle, Home } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 class ErrorBoundary extends React.Component {
@@ -25,7 +25,7 @@ class ErrorBoundary extends React.Component {
                         animate={{ scale: 1, opacity: 1 }}
                         className="w-24 h-24 bg-red-50 rounded-[40px] flex items-center justify-center text-red-500 mb-8 border border-red-100"
                     >
-                        <TriangleAlert size={48} />
+                        <AlertTriangle size={48} />
                     </motion.div>
 
                     <h1 className="text-2xl font-black text-gray-900 mb-4 tracking-tight">Something went wrong</h1>
