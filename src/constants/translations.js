@@ -58,6 +58,8 @@ export const translations = {
             today: "Today",
             yesterday: "Yesterday",
             earlier: "Earlier",
+            delete_title: "Delete Scan",
+            delete_confirm: "Are you sure you want to delete this scan? This action cannot be undone.",
         },
         scan: {
             title: "Scan Leaf",
@@ -86,11 +88,41 @@ export const translations = {
                 mild: "Mild",
                 healthy: "Healthy"
             },
-            errors: {
-                title: "Something went wrong",
-                desc: "We encountered an unexpected error. Please try again.",
-                btn: "Go Back Home",
-            }
+            report_to_lgu: "Report to LGU",
+        },
+        report: {
+            title: "Report to LGU",
+            subtitle: "Send disease alert to local authorities",
+            disease_detected: "Disease Detected",
+            select_lgu: "Select LGU Office",
+            region: "Region",
+            province: "Province",
+            municipality: "Municipality/City",
+            select_region: "Select Region",
+            select_province: "Select Province",
+            select_municipality: "Select Municipality",
+            recipient: "Recipient",
+            your_details: "Your Details",
+            farmer_name: "Your Name",
+            contact_number: "Contact Number",
+            farm_location: "Farm Location / Address",
+            additional_notes: "Additional Notes",
+            send: "Send Report",
+            sending: "Sending...",
+            success_title: "Report Sent!",
+            success_message: "Your disease report has been sent to the LGU.",
+        },
+        common_extra: {
+            cancel: "Cancel",
+            delete: "Delete",
+            done: "Done",
+            next: "Next",
+            back: "Back",
+        },
+        errors: {
+            title: "Something went wrong",
+            desc: "We encountered an unexpected error. Please try again.",
+            btn: "Go Back Home",
         }
     },
     tl: {
@@ -152,6 +184,8 @@ export const translations = {
             today: "Ngayong Araw",
             yesterday: "Kahapon",
             earlier: "Mas Maaga",
+            delete_title: "Burahin ang Scan",
+            delete_confirm: "Sigurado ka bang gusto mong burahin ang scan na ito? Hindi na ito maibabalik.",
         },
         scan: {
             title: "I-scan ang Dahon",
@@ -180,11 +214,41 @@ export const translations = {
                 mild: "Katamtaman",
                 healthy: "Malusog"
             },
-            errors: {
-                title: "Nagkaroon ng problema",
-                desc: "May nakitang hindi inaasahang error. Pakisubukan muli.",
-                btn: "Bumalik sa Home",
-            }
+            report_to_lgu: "I-report sa LGU",
+        },
+        report: {
+            title: "I-report sa LGU",
+            subtitle: "Magpadala ng alerto ng sakit sa lokal na pamahalaan",
+            disease_detected: "Natukoy na Sakit",
+            select_lgu: "Piliin ang Opisina ng LGU",
+            region: "Rehiyon",
+            province: "Lalawigan",
+            municipality: "Munisipalidad/Lungsod",
+            select_region: "Pumili ng Rehiyon",
+            select_province: "Pumili ng Lalawigan",
+            select_municipality: "Pumili ng Munisipalidad",
+            recipient: "Tatanggap",
+            your_details: "Iyong mga Detalye",
+            farmer_name: "Iyong Pangalan",
+            contact_number: "Contact Number",
+            farm_location: "Lokasyon ng Bukid / Address",
+            additional_notes: "Karagdagang Detalye",
+            send: "Ipadala ang Report",
+            sending: "Ipinapadala...",
+            success_title: "Naipadala na ang Report!",
+            success_message: "Ang iyong report ng sakit ay naipadala na sa LGU.",
+        },
+        common_extra: {
+            cancel: "Kanselahin",
+            delete: "Burahin",
+            done: "Tapos",
+            next: "Sunod",
+            back: "Bumalik",
+        },
+        errors: {
+            title: "Nagkaroon ng problema",
+            desc: "May nakitang hindi inaasahang error. Pakisubukan muli.",
+            btn: "Bumalik sa Home",
         }
     }
 };

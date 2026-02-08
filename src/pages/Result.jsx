@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ChevronLeft, Info, Share2, Activity, Layers, ShieldCheck } from 'lucide-react';
+import { ChevronLeft, Info, Share2, Activity, Layers, ShieldCheck, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
+import ReportModal from '../components/ReportModal';
 
 const Result = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { t } = useLanguage();
+    const [showReportModal, setShowReportModal] = useState(false);
 
     // Get result from navigation state or fallback to mock
     const scanResult = location.state?.scanResult || {
@@ -109,7 +111,7 @@ const Result = () => {
                             <div>
                                 <div className="flex items-center gap-2 mb-3">
                                     <Info size={18} className="text-agri-green-600" />
-                                    <h3 className="font-black text-gray-900 uppercase tracking-widest text-xs uppercase">{t('result.description_label')}</h3>
+                                    <h3 className="font-black text-gray-900 uppercase tracking-widest text-xs">{t('result.description_label')}</h3>
                                 </div>
                                 <p className="text-sm text-gray-600 leading-relaxed font-medium">{result.description}</p>
                             </div>
@@ -132,6 +134,20 @@ const Result = () => {
                     </div>
                 </div>
 
+                {/* Report to LGU Button - Only show for critical/mild status */}
+                {result.status !== 'healthy' && (
+                    <motion.button
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.3 }}
+                        onClick={() => setShowReportModal(true)}
+                        className="w-full bg-gradient-to-r from-red-500 to-orange-500 text-white font-black py-4 rounded-2xl active:scale-95 transition-all shadow-lg shadow-red-200 flex items-center justify-center gap-3"
+                    >
+                        <AlertTriangle size={20} />
+                        {t('result.report_to_lgu') || 'Report to LGU'}
+                    </motion.button>
+                )}
+
                 <div className="flex gap-4">
                     <button
                         onClick={() => navigate('/scan')}
@@ -144,6 +160,13 @@ const Result = () => {
                     </button>
                 </div>
             </motion.div>
+
+            {/* Report Modal */}
+            <ReportModal
+                isOpen={showReportModal}
+                onClose={() => setShowReportModal(false)}
+                scanResult={result}
+            />
         </div>
     );
 };
