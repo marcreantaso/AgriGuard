@@ -10,6 +10,8 @@ import Result from './pages/Result';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
 
+import History from './pages/History';
+
 const ProtectedRoute = ({ children }) => {
     const { user, loading } = useAuth();
 
@@ -17,7 +19,7 @@ const ProtectedRoute = ({ children }) => {
         return (
             <div className="min-h-screen bg-white flex flex-col items-center justify-center p-10">
                 <div className="w-16 h-16 border-4 border-agri-green-100 border-t-agri-green-500 rounded-full animate-spin mb-4"></div>
-                <p className="text-agri-green-600 font-bold animate-pulse">AgriGuard</p>
+                <p className="text-agri-green-600 font-bold animate-pulse uppercase tracking-[0.2em] text-xs">AgriGuard</p>
             </div>
         );
     }
@@ -40,8 +42,7 @@ const App = () => {
                                 <Route path="scan" element={<Scan />} />
                                 <Route path="result" element={<Result />} />
                                 <Route path="profile" element={<Profile />} />
-                                {/* Placeholders for other nav items */}
-                                <Route path="history" element={<div className="p-4 text-center text-gray-500 mt-10">Scan History Coming Soon</div>} />
+                                <Route path="history" element={<History />} />
                             </Route>
 
                             {/* Redirect any unknown routes to home */}

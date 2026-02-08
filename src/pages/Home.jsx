@@ -43,9 +43,14 @@ const Home = () => {
                 </div>
                 <motion.div
                     whileHover={{ scale: 1.1 }}
-                    className="w-12 h-12 bg-agri-green-100 rounded-2xl flex items-center justify-center text-agri-green-600 font-bold shadow-sm border border-agri-green-200"
+                    onClick={() => navigate('/profile')}
+                    className="w-12 h-12 bg-agri-green-100 rounded-2xl flex items-center justify-center text-agri-green-600 font-bold shadow-sm border border-agri-green-200 overflow-hidden cursor-pointer"
                 >
-                    {user?.name?.[0] || 'F'}
+                    {user?.photoUrl ? (
+                        <img src={user.photoUrl} alt="Me" className="w-full h-full object-cover" />
+                    ) : (
+                        user?.name?.[0] || 'F'
+                    )}
                 </motion.div>
             </motion.div>
 

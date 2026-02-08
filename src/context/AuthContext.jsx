@@ -46,8 +46,14 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     };
 
+    const updateUser = (updates) => {
+        const updatedUser = { ...user, ...updates };
+        setUser(updatedUser);
+        localStorage.setItem('agriGuardUser', JSON.stringify(updatedUser));
+    };
+
     return (
-        <AuthContext.Provider value={{ user, login, logout, loading }}>
+        <AuthContext.Provider value={{ user, login, logout, loading, updateUser }}>
             {children}
         </AuthContext.Provider>
     );

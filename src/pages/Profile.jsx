@@ -1,17 +1,33 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, User, Calendar, Languages, ChevronRight, Settings } from 'lucide-react';
+import { LogOut, User, Calendar, Languages, ChevronRight, Settings, Camera } from 'lucide-react';
 
 const Profile = () => {
-    const { user, logout } = useAuth();
+    const { user, logout, updateUser } = useAuth();
     const { language, setLanguage, t } = useLanguage();
     const navigate = useNavigate();
+    const fileInputRef = useRef(null);
 
     const handleLogout = async () => {
         await logout();
         navigate('/login');
+    };
+
+    const handlePhotoClick = () => {
+        fileInputRef.current.click();
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                updateUser({ photoUrl: reader.result });
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     if (!user) return null;
@@ -47,11 +63,36 @@ const Profile = () => {
 
             {/* Profile Card */}
             <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 mb-6 flex flex-col items-center text-center">
-                <div className="w-24 h-24 bg-agri-green-100 rounded-full flex items-center justify-center text-agri-green-600 mb-4">
-                    <User size={40} />
+                <div className="relative group">
+                    <div
+                        onClick={handlePhotoClick}
+                        className="w-24 h-24 bg-agri-green-100 rounded-full flex items-center justify-center text-agri-green-600 mb-4 overflow-hidden border-4 border-white shadow-md cursor-pointer group-hover:opacity-80 transition-opacity"
+                    >
+                        {user.photoUrl ? (
+                            <img src={user.photoUrl} alt="Profile" className="w-full h-full object-cover" />
+                        ) : (
+                            <User size={40} />
+                        )}
+                        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-full">
+                            <Camera size={24} className="text-white" />
+                        </div>
+                    </div>
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        className="hidden"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                    />
                 </div>
                 <h2 className="text-xl font-bold text-gray-800">{user.name}</h2>
-                <p className="text-gray-500 text-sm">{t('common.farmer')}</p>
+                <p className="text-gray-500 text-sm font-medium">{t('common.farmer')}</p>
+                <button
+                    onClick={handlePhotoClick}
+                    className="mt-2 text-[10px] font-black uppercase text-agri-green-600 tracking-widest hover:underline"
+                >
+                    {t('profile.change_photo')}
+                </button>
             </div>
 
             {/* Settings Sections */}
@@ -105,8 +146,9 @@ const Profile = () => {
 
                     <SettingItem
                         icon={Settings}
-                        label="App Preferences"
+                        label={t('profile.app_settings')}
                         colorClass="text-purple-500"
+                        onClick={() => { }}
                     />
                 </div>
             </div>

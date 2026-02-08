@@ -41,13 +41,27 @@ export const translations = {
             language: "Language",
             english: "English",
             tagalog: "Tagalog",
+            app_settings: "App Settings",
+            change_photo: "Change Photo",
+        },
+        history: {
+            title: "Scan History",
+            empty: "No scans yet",
+            today: "Today",
+            yesterday: "Yesterday",
+            earlier: "Earlier",
         },
         scan: {
             title: "Scan Leaf",
             help: "How to scan",
-            scanning: "Analyzing specimen...",
+            scanning: "CNN: Processing image...",
             capture_failed: "Failed to capture image",
             guide: "Position leaf within frame",
+            cnn_steps: {
+                extracting: "Extracting features...",
+                matching: "Matching patterns...",
+                classifying: "CNN: Classifying disease...",
+            }
         },
         result: {
             title: "Detection Result",
@@ -108,13 +122,27 @@ export const translations = {
             language: "Wika",
             english: "English",
             tagalog: "Tagalog",
+            app_settings: "Mga Setting ng App",
+            change_photo: "Palitan ang Larawan",
+        },
+        history: {
+            title: "Kasaysayan ng Scan",
+            empty: "Wala pang scan",
+            today: "Ngayong Araw",
+            yesterday: "Kahapon",
+            earlier: "Mas Maaga",
         },
         scan: {
             title: "I-scan ang Dahon",
             help: "Paano mag-scan",
-            scanning: "Sinusuri ang specimen...",
+            scanning: "CNN: Pinoproseso ang larawan...",
             capture_failed: "Bigo sa pagkuha ng larawan",
             guide: "I-sentro ang dahon sa frame",
+            cnn_steps: {
+                extracting: "Kinukuha ang mga feature...",
+                matching: "Tumutugma sa mga pattern...",
+                classifying: "CNN: Kinakategorya ang sakit...",
+            }
         },
         result: {
             title: "Resulta ng Pagsusuri",
