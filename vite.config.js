@@ -8,7 +8,7 @@ export default defineConfig({
         react(),
         VitePWA({
             registerType: 'autoUpdate',
-            includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg', 'logo.svg'],
+            includeAssets: ['logo.svg'],
             manifest: {
                 name: 'AgriGuard',
                 short_name: 'AgriGuard',
