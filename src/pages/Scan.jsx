@@ -30,7 +30,36 @@ const Scan = () => {
                 setCnnStep(prev => {
                     if (prev >= cnnSteps.length - 1) {
                         clearInterval(timer);
-                        setTimeout(() => navigate('/result'), 500);
+
+                        // Capture image and save to "database"
+                        const imageSrc = webcamRef.current?.getScreenshot();
+                        const scanId = Date.now();
+                        const diseases = ['Rice Blast', 'Leaf Blight', 'Tungro Virus', 'Healthy'];
+                        const statuses = ['critical', 'mild', 'critical', 'healthy'];
+                        const randomIdx = Math.floor(Math.random() * diseases.length);
+
+                        const newScan = {
+                            id: scanId,
+                            crop: 'Rice',
+                            disease: diseases[randomIdx],
+                            status: statuses[randomIdx],
+                            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                            fullDate: new Date().toISOString(),
+                            img: imageSrc || 'https://images.unsplash.com/photo-1594489428504-5c0c480a15fd?auto=format&fit=crop&q=80&w=200&h=200',
+                            confidence: (85 + Math.random() * 14).toFixed(1),
+                            cnn_details: {
+                                layers: 16,
+                                architecture: 'ResNet-50 Optimized',
+                                data_points: '450k+ samples',
+                                parameters: '23.5M'
+                            }
+                        };
+
+                        // Save to localStorage
+                        const existingScans = JSON.parse(localStorage.getItem('agriGuardScans') || '[]');
+                        localStorage.setItem('agriGuardScans', JSON.stringify([newScan, ...existingScans]));
+
+                        setTimeout(() => navigate('/result', { state: { scanResult: newScan } }), 500);
                         return prev;
                     }
                     return prev + 1;
@@ -38,7 +67,7 @@ const Scan = () => {
             }, 1000);
             return () => clearInterval(timer);
         }
-    }, [isScanning]);
+    }, [isScanning, navigate]);
 
     return (
         <div className="fixed inset-0 bg-black z-50 flex flex-col font-inter">

@@ -1,37 +1,52 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { motion } from 'framer-motion';
 import { Clock, Calendar, ChevronRight, FileSearch } from 'lucide-react';
-import Card from '../components/common/Card';
 import { useNavigate } from 'react-router-dom';
 
 const History = () => {
     const { t } = useLanguage();
     const navigate = useNavigate();
+    const [historyData, setHistoryData] = useState([]);
 
-    // Mock progressive scan history data
-    const historyData = [
-        {
-            date: t('history.today'),
-            items: [
-                { id: 101, crop: 'Rice', disease: 'Rice Blast', status: 'critical', time: '10:30 AM', img: 'https://images.unsplash.com/photo-1594489428504-5c0c480a15fd?auto=format&fit=crop&q=80&w=200&h=200' }
-            ]
-        },
-        {
-            date: t('history.yesterday'),
-            items: [
-                { id: 102, crop: 'Palay', disease: 'Healthy', status: 'healthy', time: '02:15 PM', img: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=200&h=200' },
-                { id: 103, crop: 'Rice', disease: 'Leaf Blight', status: 'mild', time: '09:45 AM', img: 'https://images.unsplash.com/photo-1628155530391-f92591609121?auto=format&fit=crop&q=80&w=200&h=200' }
-            ]
-        },
-        {
-            date: t('history.earlier'),
-            items: [
-                { id: 104, crop: 'Rice', disease: 'Tungro Virus', status: 'critical', time: 'Feb 5, 2026', img: 'https://images.unsplash.com/photo-1563200155-22d768133527?auto=format&fit=crop&q=80&w=200&h=200' },
-                { id: 105, crop: 'Palay', disease: 'Stem Borer', status: 'mild', time: 'Feb 4, 2026', img: 'https://images.unsplash.com/photo-1615814702165-44243851532f?auto=format&fit=crop&q=80&w=200&h=200' }
-            ]
-        }
-    ];
+    useEffect(() => {
+        // Load persistent scans from "database"
+        const savedScans = JSON.parse(localStorage.getItem('agriGuardScans') || '[]');
+
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+
+        const isToday = (dateStr) => {
+            const d = new Date(dateStr);
+            return d.getDate() === today.getDate() &&
+                d.getMonth() === today.getMonth() &&
+                d.getFullYear() === today.getFullYear();
+        };
+
+        const isYesterday = (dateStr) => {
+            const d = new Date(dateStr);
+            return d.getDate() === yesterday.getDate() &&
+                d.getMonth() === yesterday.getMonth() &&
+                d.getFullYear() === yesterday.getFullYear();
+        };
+
+        const todayScans = savedScans.filter(s => isToday(s.fullDate));
+        const yesterdayScans = savedScans.filter(s => isYesterday(s.fullDate));
+        const earlierScans = savedScans.filter(s => !isToday(s.fullDate) && !isYesterday(s.fullDate));
+
+        // Fallback mock data for demo purposes
+        const mockEarlier = [
+            { id: 104, crop: 'Rice', disease: 'Tungro Virus', status: 'critical', time: 'Feb 5, 2026', img: 'https://images.unsplash.com/photo-1563200155-22d768133527?auto=format&fit=crop&q=80&w=200&h=200' },
+            { id: 105, crop: 'Palay', disease: 'Stem Borer', status: 'mild', time: 'Feb 4, 2026', img: 'https://images.unsplash.com/photo-1615814702165-44243851532f?auto=format&fit=crop&q=80&w=200&h=200' }
+        ];
+
+        setHistoryData([
+            { date: t('history.today'), items: todayScans.length > 0 ? todayScans : [{ id: 101, crop: 'Rice', disease: 'Rice Blast', status: 'critical', time: '10:30 AM', img: 'https://images.unsplash.com/photo-1594489428504-5c0c480a15fd?auto=format&fit=crop&q=80&w=200&h=200' }] },
+            { date: t('history.yesterday'), items: yesterdayScans.length > 0 ? yesterdayScans : [{ id: 102, crop: 'Palay', disease: 'Healthy', status: 'healthy', time: '02:15 PM', img: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=200&h=200' }] },
+            { date: t('history.earlier'), items: earlierScans.length > 0 ? earlierScans : mockEarlier }
+        ]);
+    }, [t]);
 
     return (
         <div className="p-6 pb-24 pt-8 min-h-screen bg-gray-50/50">
@@ -62,10 +77,10 @@ const History = () => {
                                     transition={{ delay: index * 0.1 }}
                                 >
                                     <button
-                                        onClick={() => navigate(`/result?id=${scan.id}`)}
+                                        onClick={() => navigate('/result', { state: { scanResult: scan } })}
                                         className="w-full bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex items-center gap-4 hover:shadow-md transition-all active:scale-[0.98]"
                                     >
-                                        <div className="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0">
+                                        <div className="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 bg-gray-100">
                                             <img src={scan.img} alt={scan.crop} className="w-full h-full object-cover" />
                                         </div>
                                         <div className="flex-1 text-left">

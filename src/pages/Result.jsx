@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ChevronLeft, Info, Share2, Activity, Layers, ShieldCheck, ArrowLeft, Camera } from 'lucide-react';
+import { ChevronLeft, Info, Share2, Activity, Layers, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -8,28 +8,32 @@ const Result = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { t } = useLanguage();
-    const queryParams = new URLSearchParams(location.search);
-    const scanId = queryParams.get('id');
 
-    // Mock result data based on ID or default
-    const result = {
-        disease: scanId === '2' ? 'Healthy' : (scanId === '101' ? 'Rice Blast' : (scanId === '103' ? 'Tomato Blight' : 'Rice Blast')),
-        crop: (scanId === '103') ? 'Tomato' : (scanId === '2' || scanId === '102' ? 'Corn' : 'Rice'),
+    // Get result from navigation state or fallback to mock
+    const scanResult = location.state?.scanResult || {
+        disease: 'Rice Blast',
+        crop: 'Rice',
         confidence: 98.4,
-        status: (scanId === '102' || scanId === '2') ? 'healthy' : 'critical',
+        status: 'critical',
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        img: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80',
+        cnn_details: {
+            layers: 16,
+            architecture: 'ResNet-50 Optimized',
+            data_points: '450k+ samples',
+            parameters: '23.5M'
+        }
+    };
+
+    const result = {
+        ...scanResult,
         date: 'Feb 8, 2026',
         description: "A major disease that can cause significant yield loss. Our CNN model identifies patterns in the leaf structure to determine health status.",
         recommendations: [
             "Monitor plant health daily.",
             "Remove any infected debris immediately.",
             "Consult with local agricultural experts."
-        ],
-        cnn_details: {
-            layers: 16,
-            architecture: "ResNet-50 Optimized",
-            data_points: "450k+ samples",
-            parameters: "23.5M"
-        }
+        ]
     };
 
     return (
@@ -56,7 +60,7 @@ const Result = () => {
                 <div className="bg-white rounded-[32px] overflow-hidden shadow-xl shadow-agri-green-900/5 border border-white">
                     <div className="h-56 w-full relative">
                         <img
-                            src="https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80"
+                            src={result.img}
                             className="w-full h-full object-cover"
                             alt="Scanned specimen"
                         />
@@ -90,14 +94,14 @@ const Result = () => {
                                     <Activity size={14} />
                                     <span className="text-[9px] font-black uppercase tracking-widest">Algorithm</span>
                                 </div>
-                                <p className="text-xs font-bold text-gray-800">{result.cnn_details.architecture}</p>
+                                <p className="text-xs font-bold text-gray-800">{result.cnn_details?.architecture || 'ResNet-50'}</p>
                             </div>
                             <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
                                 <div className="flex items-center gap-2 mb-2 text-blue-500">
                                     <Layers size={14} />
                                     <span className="text-[9px] font-black uppercase tracking-widest">Networks</span>
                                 </div>
-                                <p className="text-xs font-bold text-gray-800">{result.cnn_details.layers} Detection Layers</p>
+                                <p className="text-xs font-bold text-gray-800">{result.cnn_details?.layers || 16} Detection Layers</p>
                             </div>
                         </div>
 
