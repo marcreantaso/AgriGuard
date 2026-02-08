@@ -1,14 +1,16 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, User, Calendar, Languages, ChevronRight, Settings, Camera, MessageSquare, Star, Send } from 'lucide-react';
+import { LogOut, User, Calendar, Languages, ChevronRight, Settings, Camera, MessageSquare, Star, Send, Pencil, Check } from 'lucide-react';
 
 const Profile = () => {
     const { user, logout, updateUser } = useAuth();
     const { language, setLanguage, t } = useLanguage();
     const navigate = useNavigate();
     const fileInputRef = useRef(null);
+    const [isEditingName, setIsEditingName] = useState(false);
+    const [editedName, setEditedName] = useState(user?.name || '');
 
     const handleLogout = async () => {
         await logout();
@@ -28,6 +30,13 @@ const Profile = () => {
             };
             reader.readAsDataURL(file);
         }
+    };
+
+    const handleNameSave = () => {
+        if (editedName.trim()) {
+            updateUser({ name: editedName.trim() });
+        }
+        setIsEditingName(false);
     };
 
     if (!user) return null;
@@ -85,7 +94,35 @@ const Profile = () => {
                         onChange={handleFileChange}
                     />
                 </div>
-                <h2 className="text-xl font-bold text-gray-800">{user.name}</h2>
+
+                {/* Editable Name */}
+                {isEditingName ? (
+                    <div className="flex items-center gap-2 mb-1">
+                        <input
+                            type="text"
+                            value={editedName}
+                            onChange={(e) => setEditedName(e.target.value)}
+                            className="text-xl font-bold text-gray-800 text-center bg-gray-50 border border-gray-200 rounded-xl px-3 py-1 focus:outline-none focus:ring-2 focus:ring-agri-green-500"
+                            autoFocus
+                            onKeyDown={(e) => e.key === 'Enter' && handleNameSave()}
+                        />
+                        <button
+                            onClick={handleNameSave}
+                            className="p-2 bg-agri-green-500 text-white rounded-xl"
+                        >
+                            <Check size={16} />
+                        </button>
+                    </div>
+                ) : (
+                    <button
+                        onClick={() => { setEditedName(user.name); setIsEditingName(true); }}
+                        className="flex items-center gap-2 group"
+                    >
+                        <h2 className="text-xl font-bold text-gray-800">{user.name}</h2>
+                        <Pencil size={14} className="text-gray-300 group-hover:text-agri-green-500 transition-colors" />
+                    </button>
+                )}
+
                 <p className="text-gray-500 text-sm font-medium">{t('common.farmer')}</p>
                 <button
                     onClick={handlePhotoClick}

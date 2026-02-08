@@ -22,7 +22,7 @@ const Home = () => {
 
     // Mock recent scans - Rice/Palay only
     const recentScans = [
-        { id: 1, crop: 'Rice', disease: 'Rice Blast', status: 'critical', date: 'Today', img: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=150&h=150' },
+        { id: 1, crop: 'Rice', disease: 'Rice Blast', status: 'critical', date: 'Today', img: 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?auto=format&fit=crop&q=80&w=150&h=150' },
         { id: 2, crop: 'Palay', disease: 'Healthy', status: 'healthy', date: 'Yesterday', img: 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?auto=format&fit=crop&q=80&w=150&h=150' },
         { id: 3, crop: 'Rice', disease: 'Leaf Blight', status: 'mild', date: 'Mon', img: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&q=80&w=150&h=150' },
     ];
