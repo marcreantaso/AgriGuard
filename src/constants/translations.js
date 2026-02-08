@@ -1,0 +1,124 @@
+export const translations = {
+    en: {
+        common: {
+            app_name: "AgriGuard",
+            version: "Version 1.0.0",
+            loading: "Loading...",
+            farmer: "Farmer",
+            logout: "Log Out",
+            home: "Home",
+            scan_again: "Scan Again",
+            find_stores: "Find Stores Nearby",
+            view_shop: "View Shop",
+            away: "away",
+        },
+        home: {
+            greeting: "Good day,",
+            locating: "Locating...",
+            humidity: "Humidity",
+            wind: "Wind",
+            scan_crop: "Scan Crop",
+            scan_desc: "Detect diseases instantly",
+            recent_scans: "Recent Scans",
+            view_all: "View All",
+        },
+        login: {
+            protect_crops: "Protecting your crops with AI",
+            login_btn: "Login as Farmer",
+            logging_in: "Logging in...",
+        },
+        profile: {
+            title: "My Profile",
+            account_details: "Account Details",
+            member_since: "Member Since",
+            settings: "Settings",
+            language: "Language",
+            english: "English",
+            tagalog: "Tagalog",
+        },
+        scan: {
+            title: "Scan Leaf",
+            help: "How to scan",
+            scanning: "Analyzing specimen...",
+            capture_failed: "Failed to capture image",
+            guide: "Position leaf within frame",
+        },
+        result: {
+            title: "Detection Result",
+            status: "Status",
+            disease: "Detected Disease",
+            probability: "Confidence Level",
+            confidence: "Confidence",
+            detected_on: "Detected on",
+            description_label: "What it is",
+            treatment_label: "What to do now",
+            products_label: "Recommended Products",
+            severity: {
+                critical: "Critical",
+                mild: "Mild",
+                healthy: "Healthy"
+            }
+        }
+    },
+    tl: {
+        common: {
+            app_name: "AgriGuard",
+            version: "Bersyon 1.0.0",
+            loading: "Naglo-load...",
+            farmer: "Magsasaka",
+            logout: "Mag-logout",
+            home: "Home",
+            scan_again: "I-scan Muli",
+            find_stores: "Maghanap ng Tindahan",
+            view_shop: "Tingnan ang Shop",
+            away: "layo",
+        },
+        home: {
+            greeting: "Magandang araw,",
+            locating: "Hinahanap...",
+            humidity: "Halumigmig",
+            wind: "Hangin",
+            scan_crop: "I-scan ang Pananim",
+            scan_desc: "Tukuyin ang sakit agad-agad",
+            recent_scans: "Mga Nakaraang Scan",
+            view_all: "Tingnan Lahat",
+        },
+        login: {
+            protect_crops: "Protektahan ang iyong pananim gamit ang AI",
+            login_btn: "Mag-login bilang Magsasaka",
+            logging_in: "Nag-lologin...",
+        },
+        profile: {
+            title: "Aking Profile",
+            account_details: "Detalye ng Account",
+            member_since: "Miyembro Simula",
+            settings: "Mga Setting",
+            language: "Wika",
+            english: "English",
+            tagalog: "Tagalog",
+        },
+        scan: {
+            title: "I-scan ang Dahon",
+            help: "Paano mag-scan",
+            scanning: "Sinusuri ang specimen...",
+            capture_failed: "Bigo sa pagkuha ng larawan",
+            guide: "I-sentro ang dahon sa frame",
+        },
+        result: {
+            title: "Resulta ng Pagsusuri",
+            status: "Katayuan",
+            disease: "Natukoy na Sakit",
+            probability: "Antas ng Kumpiyansa",
+            confidence: "Kumpiyansa",
+            detected_on: "Natukoy noong",
+            description_label: "Ano ito",
+            treatment_label: "Ano ang dapat gawin",
+            products_label: "Mga Inirerekomendang Produkto",
+            severity: {
+                critical: "Kritikal",
+                mild: "Katamtaman",
+                healthy: "Malusog"
+            }
+        }
+    }
+};

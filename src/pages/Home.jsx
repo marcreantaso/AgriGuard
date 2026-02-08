@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Camera, Sun, Cloud, CloudRain, MapPin, ChevronRight, Droplets, Wind } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLocation } from '../context/LocationContext';
+import { useLanguage } from '../context/LanguageContext';
 import Button from '../components/common/Button';
 import Card from '../components/common/Card';
 import { motion } from 'framer-motion';
@@ -10,6 +11,7 @@ import { motion } from 'framer-motion';
 const Home = () => {
     const { user } = useAuth();
     const { weather, location, loading: locationLoading } = useLocation();
+    const { t } = useLanguage();
     const navigate = useNavigate();
 
     const getWeatherIcon = (condition) => {
@@ -36,8 +38,8 @@ const Home = () => {
                 className="flex justify-between items-start"
             >
                 <div>
-                    <h2 className="text-agri-green-700 font-medium">Magandang araw,</h2>
-                    <h1 className="text-3xl font-bold text-gray-900">{user?.name || 'Farmer'}!</h1>
+                    <h2 className="text-agri-green-700 font-medium">{t('home.greeting')}</h2>
+                    <h1 className="text-3xl font-bold text-gray-900">{user?.name || t('common.farmer')}!</h1>
                 </div>
                 <div className="w-10 h-10 bg-agri-green-100 rounded-full flex items-center justify-center text-agri-green-600 font-bold">
                     {user?.name?.[0] || 'F'}
@@ -51,7 +53,7 @@ const Home = () => {
                         <div>
                             <div className="flex items-center text-agri-green-100 text-sm mb-1">
                                 <MapPin className="w-4 h-4 mr-1" />
-                                {locationLoading ? 'Locating...' : (weather?.locationName || 'San Jose, Nueva Ecija')}
+                                {locationLoading ? t('home.locating') : (weather?.locationName || 'San Jose, Nueva Ecija')}
                             </div>
                             <div className="text-4xl font-bold flex items-center">
                                 {weather?.temp || 28}°
@@ -65,11 +67,11 @@ const Home = () => {
                     <div className="flex gap-4 pt-4 border-t border-white/20">
                         <div className="flex items-center text-sm text-agri-green-50">
                             <Droplets className="w-4 h-4 mr-2" />
-                            {weather?.humidity || 65}% Humidity
+                            {weather?.humidity || 65}% {t('home.humidity')}
                         </div>
                         <div className="flex items-center text-sm text-agri-green-50">
                             <Wind className="w-4 h-4 mr-2" />
-                            {weather?.windSpeed || 12} km/h
+                            {weather?.windSpeed || 12} km/h {t('home.wind')}
                         </div>
                     </div>
                 </div>
@@ -89,8 +91,8 @@ const Home = () => {
                             <Camera className="w-8 h-8" />
                         </div>
                         <div className="text-left">
-                            <h3 className="text-xl font-bold text-gray-900">Scan Crop</h3>
-                            <p className="text-gray-500 text-sm">Detect diseases instantly</p>
+                            <h3 className="text-xl font-bold text-gray-900">{t('home.scan_crop')}</h3>
+                            <p className="text-gray-500 text-sm">{t('home.scan_desc')}</p>
                         </div>
                     </div>
                     <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-agri-green-50 group-hover:text-agri-green-600 transition-colors">
@@ -102,8 +104,8 @@ const Home = () => {
             {/* Recent Scans */}
             <div>
                 <div className="flex items-center justify-between mb-3 px-1">
-                    <h3 className="font-bold text-gray-900">Recent Scans</h3>
-                    <button className="text-agri-green-600 text-sm font-medium hover:underline">View All</button>
+                    <h3 className="font-bold text-gray-900">{t('home.recent_scans')}</h3>
+                    <button className="text-agri-green-600 text-sm font-medium hover:underline">{t('home.view_all')}</button>
                 </div>
 
                 <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide">
@@ -112,7 +114,7 @@ const Home = () => {
                             <div className="h-28 w-full bg-gray-200 relative">
                                 <img src={scan.img} alt={scan.crop} className="w-full h-full object-cover" />
                                 <div className={`absolute top-2 right-2 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${scan.status === 'healthy' ? 'bg-green-500 text-white' :
-                                        scan.status === 'critical' ? 'bg-red-500 text-white' : 'bg-orange-500 text-white'
+                                    scan.status === 'critical' ? 'bg-red-500 text-white' : 'bg-orange-500 text-white'
                                     }`}>
                                     {scan.status}
                                 </div>

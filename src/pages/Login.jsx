@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const { login } = useAuth();
+    const { t } = useLanguage();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
 
@@ -24,8 +26,8 @@ const Login = () => {
             <div className="absolute bottom-[-10%] right-[-10%] w-80 h-80 bg-orange-100 rounded-full blur-3xl opacity-60"></div>
 
             <div className="w-24 h-24 bg-agri-green-100 rounded-3xl flex items-center justify-center mb-6 text-4xl shadow-sm z-10">🌱</div>
-            <h1 className="text-3xl font-bold text-agri-green-700 mb-2 z-10">AgriGuard</h1>
-            <p className="text-gray-500 mb-10 text-center z-10">Protecting your crops with AI</p>
+            <h1 className="text-3xl font-bold text-agri-green-700 mb-2 z-10">{t('common.app_name')}</h1>
+            <p className="text-gray-500 mb-10 text-center z-10">{t('login.protect_crops')}</p>
 
             <button
                 onClick={handleLogin}
@@ -38,13 +40,13 @@ const Login = () => {
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        Logging in...
+                        {t('login.logging_in')}
                     </span>
                 ) : (
-                    "Login as Farmer"
+                    t('login.login_btn')
                 )}
             </button>
-            <p className="mt-6 text-sm text-gray-400 z-10">Version 1.0.0</p>
+            <p className="mt-6 text-sm text-gray-400 z-10">{t('common.version')}</p>
         </div>
     );
 };
