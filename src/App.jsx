@@ -11,6 +11,7 @@ import Login from './pages/Login';
 import Profile from './pages/Profile';
 
 import History from './pages/History';
+import ErrorBoundary from './components/common/ErrorBoundary';
 
 const ProtectedRoute = ({ children }) => {
     const { user, loading } = useAuth();
@@ -30,28 +31,30 @@ const ProtectedRoute = ({ children }) => {
 
 const App = () => {
     return (
-        <BrowserRouter>
-            <AuthProvider>
-                <LanguageProvider>
-                    <LocationProvider>
-                        <Routes>
-                            <Route path="/login" element={<Login />} />
+        <ErrorBoundary>
+            <BrowserRouter>
+                <AuthProvider>
+                    <LanguageProvider>
+                        <LocationProvider>
+                            <Routes>
+                                <Route path="/login" element={<Login />} />
 
-                            <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-                                <Route index element={<Home />} />
-                                <Route path="scan" element={<Scan />} />
-                                <Route path="result" element={<Result />} />
-                                <Route path="profile" element={<Profile />} />
-                                <Route path="history" element={<History />} />
-                            </Route>
+                                <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+                                    <Route index element={<Home />} />
+                                    <Route path="scan" element={<Scan />} />
+                                    <Route path="result" element={<Result />} />
+                                    <Route path="profile" element={<Profile />} />
+                                    <Route path="history" element={<History />} />
+                                </Route>
 
-                            {/* Redirect any unknown routes to home */}
-                            <Route path="*" element={<Navigate to="/" replace />} />
-                        </Routes>
-                    </LocationProvider>
-                </LanguageProvider>
-            </AuthProvider>
-        </BrowserRouter>
+                                {/* Redirect any unknown routes to home */}
+                                <Route path="*" element={<Navigate to="/" replace />} />
+                            </Routes>
+                        </LocationProvider>
+                    </LanguageProvider>
+                </AuthProvider>
+            </BrowserRouter>
+        </ErrorBoundary>
     );
 };
 

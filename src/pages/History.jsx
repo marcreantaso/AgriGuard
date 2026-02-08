@@ -14,20 +14,21 @@ const History = () => {
         {
             date: t('history.today'),
             items: [
-                { id: 101, crop: 'Rice', disease: 'Rice Blast', status: 'critical', time: '10:30 AM', img: 'https://images.unsplash.com/photo-1536633100230-67440bce326f?auto=format&fit=crop&q=80&w=200&h=200' }
+                { id: 101, crop: 'Rice', disease: 'Rice Blast', status: 'critical', time: '10:30 AM', img: 'https://images.unsplash.com/photo-1594489428504-5c0c480a15fd?auto=format&fit=crop&q=80&w=200&h=200' }
             ]
         },
         {
             date: t('history.yesterday'),
             items: [
-                { id: 102, crop: 'Palay', disease: 'Healthy', status: 'healthy', time: '02:15 PM', img: 'https://images.unsplash.com/photo-1594488311340-983f47e2463e?auto=format&fit=crop&q=80&w=200&h=200' },
-                { id: 103, crop: 'Rice', disease: 'Leaf Blight', status: 'mild', time: '09:45 AM', img: 'https://images.unsplash.com/photo-1536633345484-cf950942e61a?auto=format&fit=crop&q=80&w=200&h=200' }
+                { id: 102, crop: 'Palay', disease: 'Healthy', status: 'healthy', time: '02:15 PM', img: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=200&h=200' },
+                { id: 103, crop: 'Rice', disease: 'Leaf Blight', status: 'mild', time: '09:45 AM', img: 'https://images.unsplash.com/photo-1628155530391-f92591609121?auto=format&fit=crop&q=80&w=200&h=200' }
             ]
         },
         {
             date: t('history.earlier'),
             items: [
-                { id: 104, crop: 'Rice', disease: 'Tungro Virus', status: 'critical', time: 'Feb 5, 2026', img: 'https://images.unsplash.com/photo-1510461876527-316886e8869c?auto=format&fit=crop&q=80&w=200&h=200' }
+                { id: 104, crop: 'Rice', disease: 'Tungro Virus', status: 'critical', time: 'Feb 5, 2026', img: 'https://images.unsplash.com/photo-1563200155-22d768133527?auto=format&fit=crop&q=80&w=200&h=200' },
+                { id: 105, crop: 'Palay', disease: 'Stem Borer', status: 'mild', time: 'Feb 4, 2026', img: 'https://images.unsplash.com/photo-1615814702165-44243851532f?auto=format&fit=crop&q=80&w=200&h=200' }
             ]
         }
     ];

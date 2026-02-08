@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, User, Calendar, Languages, ChevronRight, Settings, Camera } from 'lucide-react';
+import { LogOut, User, Calendar, Languages, ChevronRight, Settings, Camera, MessageSquare, Star, Send } from 'lucide-react';
 
 const Profile = () => {
     const { user, logout, updateUser } = useAuth();
@@ -150,6 +150,35 @@ const Profile = () => {
                         colorClass="text-purple-500"
                         onClick={() => { }}
                     />
+                </div>
+
+                {/* Feedback Section */}
+                <div className="bg-white rounded-[32px] p-6 shadow-sm border border-gray-100">
+                    <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-4 mb-4">
+                        {t('profile.feedback')}
+                    </h3>
+
+                    <div className="bg-orange-50/50 rounded-2xl p-5 border border-orange-100/50 mb-4">
+                        <div className="flex items-center gap-3 mb-3">
+                            <MessageSquare size={18} className="text-orange-500" />
+                            <p className="text-sm font-bold text-gray-800">{t('profile.rate_app')}</p>
+                        </div>
+                        <div className="flex gap-2 mb-4">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                                <button key={star} className="text-orange-400 active:scale-90 transition-all">
+                                    <Star size={20} fill={star <= 4 ? "currentColor" : "none"} />
+                                </button>
+                            ))}
+                        </div>
+                        <textarea
+                            placeholder={t('profile.feedback_placeholder')}
+                            className="w-full bg-white border border-gray-100 rounded-xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-agri-green-500 h-20 transition-all mb-3 shadow-inner"
+                        ></textarea>
+                        <button className="w-full bg-agri-green-500 text-white font-black py-3 rounded-xl shadow-lg shadow-agri-green-200 active:scale-95 transition-all text-xs flex items-center justify-center gap-2">
+                            <Send size={14} />
+                            {t('profile.send_feedback')}
+                        </button>
+                    </div>
                 </div>
             </div>
 

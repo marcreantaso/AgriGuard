@@ -46,6 +46,11 @@ export const translations = {
             tagalog: "Tagalog",
             app_settings: "App Settings",
             change_photo: "Change Photo",
+            feedback: "Feedback",
+            rate_app: "Rate our App",
+            send_feedback: "Send Feedback",
+            feedback_placeholder: "Tell us how to improve...",
+            feedback_success: "Thank you for your feedback!",
         },
         history: {
             title: "Scan History",
@@ -80,6 +85,11 @@ export const translations = {
                 critical: "Critical",
                 mild: "Mild",
                 healthy: "Healthy"
+            },
+            errors: {
+                title: "Something went wrong",
+                desc: "We encountered an unexpected error. Please try again.",
+                btn: "Go Back Home",
             }
         }
     },
@@ -130,6 +140,11 @@ export const translations = {
             tagalog: "Tagalog",
             app_settings: "Mga Setting ng App",
             change_photo: "Palitan ang Larawan",
+            feedback: "Feedback",
+            rate_app: "I-rate ang aming App",
+            send_feedback: "Magpadala ng Feedback",
+            feedback_placeholder: "Sabihin sa amin kung paano mapapabuti...",
+            feedback_success: "Salamat sa iyong feedback!",
         },
         history: {
             title: "Kasaysayan ng Scan",
@@ -164,6 +179,11 @@ export const translations = {
                 critical: "Kritikal",
                 mild: "Katamtaman",
                 healthy: "Malusog"
+            },
+            errors: {
+                title: "Nagkaroon ng problema",
+                desc: "May nakitang hindi inaasahang error. Pakisubukan muli.",
+                btn: "Bumalik sa Home",
             }
         }
     }
