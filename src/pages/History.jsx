@@ -37,12 +37,12 @@ const History = () => {
         const yesterdayScans = savedScans.filter(s => isYesterday(s.fullDate));
         const earlierScans = savedScans.filter(s => !isToday(s.fullDate) && !isYesterday(s.fullDate));
 
-        // Fallback mock data for demo purposes
+        // Fallback mock data for demo purposes - Rice/Palay diseases with working images
         const mockEarlier = [
-            { id: 101, crop: 'Rice', disease: 'Stem Borer Damage', status: 'critical', time: '10:30 AM', img: 'https://www.irri.org/sites/default/files/inline-images/stem-borer-damage.jpg', isMock: true },
-            { id: 102, crop: 'Rice', disease: 'Tungro Virus', status: 'critical', time: '02:15 PM', img: 'https://www.irri.org/sites/default/files/inline-images/tungro-symptoms.jpg', isMock: true },
-            { id: 103, crop: 'Rice', disease: 'Healthy', status: 'healthy', time: '09:45 AM', img: 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?auto=format&fit=crop&q=80&w=200&h=200', isMock: true },
-            { id: 104, crop: 'Rice', disease: 'Rice Blast', status: 'critical', time: 'Feb 5, 2026', img: 'https://www.irri.org/sites/default/files/inline-images/blast-lesions.jpg', isMock: true }
+            { id: 101, crop: 'Rice', disease: 'Rice Blast', status: 'critical', time: '10:30 AM', img: 'https://images.unsplash.com/photo-1599420186946-7b6fb4e297f0?auto=format&fit=crop&q=80&w=200&h=200', isMock: true },
+            { id: 102, crop: 'Palay', disease: 'Leaf Blight', status: 'mild', time: '09:45 AM', img: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&q=80&w=200&h=200', isMock: true },
+            { id: 103, crop: 'Palay', disease: 'Healthy', status: 'healthy', time: '02:15 PM', img: 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?auto=format&fit=crop&q=80&w=200&h=200', isMock: true },
+            { id: 104, crop: 'Rice', disease: 'Tungro Virus', status: 'critical', time: 'Feb 5, 2026', img: 'https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?auto=format&fit=crop&q=80&w=200&h=200', isMock: true }
         ];
 
         setHistoryData([
