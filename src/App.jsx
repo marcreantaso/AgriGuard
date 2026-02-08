@@ -12,7 +12,16 @@ import Profile from './pages/Profile';
 
 const ProtectedRoute = ({ children }) => {
     const { user, loading } = useAuth();
-    if (loading) return null; // Or a loading spinner
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-white flex flex-col items-center justify-center p-10">
+                <div className="w-16 h-16 border-4 border-agri-green-100 border-t-agri-green-500 rounded-full animate-spin mb-4"></div>
+                <p className="text-agri-green-600 font-bold animate-pulse">AgriGuard</p>
+            </div>
+        );
+    }
+
     if (!user) return <Navigate to="/login" replace />;
     return children;
 };

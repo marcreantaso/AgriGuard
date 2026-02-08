@@ -9,28 +9,46 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Check local storage for persistent login
-        const storedUser = localStorage.getItem('agriGuardUser');
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-        }
-        setLoading(false);
+        const checkAuth = async () => {
+            const storedUser = localStorage.getItem('agriGuardUser');
+            if (storedUser) {
+                // Simulate a small delay for verification
+                await new Promise(resolve => setTimeout(resolve, 500));
+                setUser(JSON.parse(storedUser));
+            }
+            setLoading(false);
+        };
+        checkAuth();
     }, []);
 
-    const login = (name) => {
-        const newUser = { name, joined: new Date().toISOString() };
+    const login = async (name) => {
+        setLoading(true);
+        // Simulate real-time authentication delay
+        await new Promise(resolve => setTimeout(resolve, 1200));
+
+        const newUser = {
+            name,
+            joined: new Date().toISOString(),
+            id: 'farmer_' + Math.floor(Math.random() * 10000)
+        };
+
         setUser(newUser);
         localStorage.setItem('agriGuardUser', JSON.stringify(newUser));
+        setLoading(false);
+        return true;
     };
 
-    const logout = () => {
+    const logout = async () => {
+        setLoading(true);
+        await new Promise(resolve => setTimeout(resolve, 800));
         setUser(null);
         localStorage.removeItem('agriGuardUser');
+        setLoading(false);
     };
 
     return (
         <AuthContext.Provider value={{ user, login, logout, loading }}>
-            {!loading && children}
+            {children}
         </AuthContext.Provider>
     );
 };

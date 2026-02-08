@@ -12,11 +12,14 @@ const Login = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
-        // Simulate a small delay for better UX
-        setTimeout(() => {
-            login('Juan dela Cruz');
+        try {
+            await login('Juan dela Cruz');
             navigate('/');
-        }, 800);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
