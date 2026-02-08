@@ -8,22 +8,26 @@ export default defineConfig({
         react(),
         VitePWA({
             registerType: 'autoUpdate',
-            includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
+            includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg', 'logo.svg'],
             manifest: {
                 name: 'AgriGuard',
                 short_name: 'AgriGuard',
                 description: 'AI-powered crop disease detection for Filipino farmers',
-                theme_color: '#ffffff',
+                theme_color: '#4CAF50',
+                background_color: '#ffffff',
+                display: 'standalone',
                 icons: [
                     {
-                        src: 'pwa-192x192.png',
+                        src: 'logo.svg',
                         sizes: '192x192',
-                        type: 'image/png'
+                        type: 'image/svg+xml',
+                        purpose: 'any maskable'
                     },
                     {
-                        src: 'pwa-512x512.png',
+                        src: 'logo.svg',
                         sizes: '512x512',
-                        type: 'image/png'
+                        type: 'image/svg+xml',
+                        purpose: 'any maskable'
                     }
                 ]
             }
