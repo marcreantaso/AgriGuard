@@ -24,8 +24,14 @@ export const translations = {
         },
         login: {
             protect_crops: "Protecting your crops with AI",
-            login_btn: "Login as Farmer",
+            login_btn: "Login",
             logging_in: "Logging in...",
+            create_account: "Create Account",
+            full_name: "Full Name",
+            have_account: "Already have an account?",
+            no_account: "Don't have an account?",
+            signing_up: "Creating account...",
+            signup_btn: "Sign Up",
         },
         profile: {
             title: "My Profile",
@@ -85,8 +91,14 @@ export const translations = {
         },
         login: {
             protect_crops: "Protektahan ang iyong pananim gamit ang AI",
-            login_btn: "Mag-login bilang Magsasaka",
+            login_btn: "Mag-login",
             logging_in: "Nag-lologin...",
+            create_account: "Gumawa ng Account",
+            full_name: "Buong Pangalan",
+            have_account: "May account na ba?",
+            no_account: "Wala pang account?",
+            signing_up: "Gumagawa ng account...",
+            signup_btn: "Mag-signup",
         },
         profile: {
             title: "Aking Profile",
