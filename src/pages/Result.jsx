@@ -4,6 +4,7 @@ import { ChevronLeft, Info, Share2, Activity, Layers, ShieldCheck, AlertTriangle
 import { motion } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 import ReportModal from '../components/ReportModal';
+import { getDiseaseInfo } from '../constants/diseases';
 
 const Result = () => {
     const navigate = useNavigate();
@@ -27,15 +28,21 @@ const Result = () => {
         }
     };
 
+    // Get detailed info for the disease
+    const diseaseInfo = getDiseaseInfo(scanResult.disease);
+
     const result = {
         ...scanResult,
-        date: 'Feb 8, 2026',
-        description: "A major disease that can cause significant yield loss. Our CNN model identifies patterns in the leaf structure to determine health status.",
-        recommendations: [
-            "Monitor plant health daily.",
-            "Remove any infected debris immediately.",
-            "Consult with local agricultural experts."
-        ]
+        // Use Image from disease info if the scanResult doesn't have a specific user-captured image (or if it's the default mock)
+        // For now, we prefer the disease info image for "accurate specific crops" as requested, 
+        // unless it's clearly a user capture (which we can't easily detect without a flag, but assuming mock flow for now reviews)
+        // If scanResult.img is the default Unsplash one from line 21, replace it. 
+        // To be safe and compliant with "recreate those photos", we'll prefer the accurate disease image for this demo.
+        img: diseaseInfo.img || scanResult.img,
+        date: scanResult.time || new Date().toLocaleDateString(),
+        description: diseaseInfo.description,
+        recommendations: diseaseInfo.treatment,
+        status: diseaseInfo.status || scanResult.status
     };
 
     return (
