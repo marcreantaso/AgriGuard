@@ -10,8 +10,14 @@ import Result from './pages/Result';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
 import ShopLocator from './pages/ShopLocator';
-
 import History from './pages/History';
+import FieldVisits from './pages/FieldVisits';
+import Marketplace from './pages/Marketplace';
+import MarketplaceDetail from './pages/MarketplaceDetail';
+import Wallet from './pages/Wallet';
+import SafetyLogs from './pages/SafetyLogs';
+import Analytics from './pages/Analytics';
+import More from './pages/More';
 import ErrorBoundary from './components/common/ErrorBoundary';
 
 const ProtectedRoute = ({ children }) => {
@@ -47,6 +53,13 @@ const App = () => {
                                     <Route path="shops" element={<ShopLocator />} />
                                     <Route path="profile" element={<Profile />} />
                                     <Route path="history" element={<History />} />
+                                    <Route path="visits" element={<FieldVisits />} />
+                                    <Route path="marketplace" element={<Marketplace />} />
+                                    <Route path="marketplace/:id" element={<MarketplaceDetail />} />
+                                    <Route path="wallet" element={<Wallet />} />
+                                    <Route path="safety" element={<SafetyLogs />} />
+                                    <Route path="analytics" element={<Analytics />} />
+                                    <Route path="more" element={<More />} />
                                 </Route>
 
                                 {/* Redirect any unknown routes to home */}

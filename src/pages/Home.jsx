@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Camera, Sun, Cloud, CloudRain, MapPin, ChevronRight, Droplets, Wind, RefreshCw } from 'lucide-react';
+import { Camera, Sun, Cloud, CloudRain, MapPin, ChevronRight, Droplets, Wind, RefreshCw, ShoppingCart, Wallet, Shield, BarChart3 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLocation } from '../context/LocationContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -27,6 +27,13 @@ const Home = () => {
         const savedScans = JSON.parse(localStorage.getItem('agriGuardScans') || '[]');
         setRecentScans(savedScans.slice(0, 5)); // Show up to 5 most recent
     }, []);
+
+    const featureCards = [
+        { label: 'Field Visits', desc: 'GPS-tagged logs', icon: MapPin, path: '/visits', color: 'from-agri-green-500 to-agri-green-700', shadow: 'shadow-agri-green-200' },
+        { label: 'Marketplace', desc: 'Buyer offers', icon: ShoppingCart, path: '/marketplace', color: 'from-agri-blue-500 to-agri-blue-700', shadow: 'shadow-agri-blue-200' },
+        { label: 'Wallet', desc: 'Earnings & payouts', icon: Wallet, path: '/wallet', color: 'from-agri-purple-500 to-agri-purple-700', shadow: 'shadow-agri-purple-200' },
+        { label: 'Safety Logs', desc: 'Incident reports', icon: Shield, path: '/safety', color: 'from-agri-red-500 to-agri-red-700', shadow: 'shadow-agri-red-100' },
+    ];
 
     return (
         <div className="space-y-6 pb-24 px-4 pt-4">
@@ -127,6 +134,34 @@ const Home = () => {
                     </div>
                 </button>
             </motion.div>
+
+            {/* Quick Features Grid */}
+            <div>
+                <h3 className="font-black text-gray-900 text-lg tracking-tight mb-3 px-1">Quick Access</h3>
+                <div className="grid grid-cols-2 gap-3">
+                    {featureCards.map((card, idx) => {
+                        const Icon = card.icon;
+                        return (
+                            <motion.button
+                                key={card.path}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: idx * 0.08 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => navigate(card.path)}
+                                className={`bg-gradient-to-br ${card.color} text-white rounded-2xl p-4 text-left shadow-lg ${card.shadow} relative overflow-hidden`}
+                            >
+                                <div className="absolute top-0 right-0 w-14 h-14 bg-white/10 rounded-full -mr-5 -mt-5 blur-lg" />
+                                <div className="relative z-10">
+                                    <Icon className="w-7 h-7 mb-3 opacity-90" />
+                                    <h4 className="font-bold text-sm">{card.label}</h4>
+                                    <p className="text-[10px] opacity-70">{card.desc}</p>
+                                </div>
+                            </motion.button>
+                        );
+                    })}
+                </div>
+            </div>
 
             {/* Recent Scans */}
             <div>
