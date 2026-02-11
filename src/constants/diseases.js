@@ -63,6 +63,54 @@ export const diseases = {
         ],
         img: 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?auto=format&fit=crop&q=80&w=800'
     },
+    'Brown Spot': {
+        crop: 'Rice',
+        disease: 'Brown Spot',
+        status: 'mild',
+        description: "Fungal disease causing round to oval dark-brown spots on leaves. It often occurs in nutrient-deficient soils.",
+        treatment: [
+            "Improve soil fertility with Potash and Zinc.",
+            "Use resistant varieties.",
+            "Apply fungicides if infection is severe."
+        ],
+        img: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=800'
+    },
+    'Common Rust': {
+        crop: 'Corn',
+        disease: 'Common Rust',
+        status: 'mild',
+        description: "Fungal disease causing cinnamon-brown pustules on leaves. Common in cool, moist conditions.",
+        treatment: [
+            "Plant resistant hybrids.",
+            "Apply fungicides early if conditions favor disease.",
+            "Crop rotation."
+        ],
+        img: 'https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&q=80&w=800'
+    },
+    'Gray Leaf Spot': {
+        crop: 'Corn',
+        disease: 'Gray Leaf Spot',
+        status: 'severe',
+        description: "Fungal disease causing rectangular gray to tan lesions. Can cause significant yield loss.",
+        treatment: [
+            "Tillage to bury infected residue.",
+            "Crop rotation (2 years).",
+            "Fungicide application."
+        ],
+        img: 'https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&q=80&w=800'
+    },
+    'Northern Leaf Blight': {
+        crop: 'Corn',
+        disease: 'Northern Leaf Blight',
+        status: 'severe',
+        description: "Fungal disease causing long, cigar-shaped grayish-green lesions.",
+        treatment: [
+            "Use resistant hybrids.",
+            "Fungicide application.",
+            "Manage crop residue."
+        ],
+        img: 'https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&q=80&w=800'
+    },
     // Banana Diseases
     'Panama Disease': {
         crop: 'Banana',

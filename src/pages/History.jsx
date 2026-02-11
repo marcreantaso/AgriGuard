@@ -37,18 +37,10 @@ const History = () => {
         const yesterdayScans = savedScans.filter(s => isYesterday(s.fullDate));
         const earlierScans = savedScans.filter(s => !isToday(s.fullDate) && !isYesterday(s.fullDate));
 
-        // Fallback mock data for demo purposes - Rice/Palay diseases with working images
-        const mockEarlier = [
-            { id: 101, crop: 'Rice', disease: 'Rice Blast', status: 'critical', time: '10:30 AM', img: 'https://images.unsplash.com/photo-1599420186946-7b6fb4e297f0?auto=format&fit=crop&q=80&w=200&h=200', isMock: true },
-            { id: 102, crop: 'Palay', disease: 'Leaf Blight', status: 'mild', time: '09:45 AM', img: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&q=80&w=200&h=200', isMock: true },
-            { id: 103, crop: 'Palay', disease: 'Healthy', status: 'healthy', time: '02:15 PM', img: 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?auto=format&fit=crop&q=80&w=200&h=200', isMock: true },
-            { id: 104, crop: 'Rice', disease: 'Tungro Virus', status: 'critical', time: 'Feb 5, 2026', img: 'https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?auto=format&fit=crop&q=80&w=200&h=200', isMock: true }
-        ];
-
         setHistoryData([
-            { date: t('history.today'), items: todayScans.length > 0 ? todayScans : mockEarlier.slice(0, 2) },
-            { date: t('history.yesterday'), items: yesterdayScans.length > 0 ? yesterdayScans : [mockEarlier[2]] },
-            { date: t('history.earlier'), items: earlierScans.length > 0 ? earlierScans : [mockEarlier[3]] }
+            { date: t('history.today'), items: todayScans },
+            { date: t('history.yesterday'), items: yesterdayScans },
+            { date: t('history.earlier'), items: earlierScans }
         ]);
     };
 
@@ -119,17 +111,15 @@ const History = () => {
                                                 </div>
                                             </button>
 
-                                            {!scan.isMock && (
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        setDeleteConfirm(scan.id);
-                                                    }}
-                                                    className="p-2 rounded-xl bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-500 transition-all"
-                                                >
-                                                    <Trash2 size={16} />
-                                                </button>
-                                            )}
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setDeleteConfirm(scan.id);
+                                                }}
+                                                className="p-2 rounded-xl bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-500 transition-all"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
 
                                             <ChevronRight size={18} className="text-gray-200" />
                                         </div>
