@@ -90,7 +90,7 @@ const Scan = () => {
                                 const prediction = await predictDisease(imgEl);
 
                                 if (prediction.confidence < CONFIDENCE_THRESHOLD) {
-                                    setScanError('Unable to identify a crop disease. Please make sure you are uploading a clear photo of a Rice, Corn, or Banana leaf.');
+                                    setScanError('This doesn\'t appear to be a crop leaf. AgriGuard can only identify diseases on Rice, Corn, or Banana leaves — not grains, cooked rice, or other items. Please scan a fresh leaf.');
                                     setIsScanning(false);
                                     setUploadedImage(null);
                                     return;
@@ -175,7 +175,7 @@ const Scan = () => {
 
                                     // Error handling: reject if confidence below threshold
                                     if (prediction.confidence < CONFIDENCE_THRESHOLD) {
-                                        setScanError('Unable to identify a crop disease. Please make sure you are scanning a Rice, Corn, or Banana leaf clearly.');
+                                        setScanError('This doesn\'t appear to be a crop leaf. AgriGuard can only identify diseases on Rice, Corn, or Banana leaves — not grains, cooked rice, or other items. Please scan a fresh leaf.');
                                         setIsScanning(false);
                                         return;
                                     }

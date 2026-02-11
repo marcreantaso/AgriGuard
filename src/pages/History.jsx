@@ -167,13 +167,13 @@ const History = () => {
                                     onClick={() => setDeleteConfirm(null)}
                                     className="flex-1 py-3 rounded-2xl bg-gray-100 text-gray-600 font-bold"
                                 >
-                                    {t('common.cancel') || 'Cancel'}
+                                    Cancel
                                 </button>
                                 <button
                                     onClick={() => deleteScan(deleteConfirm)}
                                     className="flex-1 py-3 rounded-2xl bg-red-500 text-white font-bold"
                                 >
-                                    {t('common_extra.delete') || 'Delete'}
+                                    Delete
                                 </button>
                             </div>
                         </motion.div>
