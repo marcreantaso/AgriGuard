@@ -33,12 +33,8 @@ const Result = () => {
 
     const result = {
         ...scanResult,
-        // Use Image from disease info if the scanResult doesn't have a specific user-captured image (or if it's the default mock)
-        // For now, we prefer the disease info image for "accurate specific crops" as requested, 
-        // unless it's clearly a user capture (which we can't easily detect without a flag, but assuming mock flow for now reviews)
-        // If scanResult.img is the default Unsplash one from line 21, replace it. 
-        // To be safe and compliant with "recreate those photos", we'll prefer the accurate disease image for this demo.
-        img: diseaseInfo.img || scanResult.img,
+        // Use the user's captured image if available, otherwise fall back to disease reference image
+        img: scanResult.img || diseaseInfo.img,
         date: scanResult.time || new Date().toLocaleDateString(),
         description: diseaseInfo.description,
         recommendations: diseaseInfo.treatment,

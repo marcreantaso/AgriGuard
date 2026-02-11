@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Camera, Sun, Cloud, CloudRain, MapPin, ChevronRight, Droplets, Wind, RefreshCw } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -20,12 +20,13 @@ const Home = () => {
         return <Sun className="w-10 h-10 text-yellow-300" />;
     };
 
-    // Mock recent scans - Rice/Palay only
-    const recentScans = [
-        { id: 1, crop: 'Rice', disease: 'Rice Blast', status: 'critical', date: 'Today', img: 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?auto=format&fit=crop&q=80&w=150&h=150' },
-        { id: 2, crop: 'Palay', disease: 'Healthy', status: 'healthy', date: 'Yesterday', img: 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?auto=format&fit=crop&q=80&w=150&h=150' },
-        { id: 3, crop: 'Rice', disease: 'Leaf Blight', status: 'mild', date: 'Mon', img: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&q=80&w=150&h=150' },
-    ];
+    // Load recent scans from localStorage
+    const [recentScans, setRecentScans] = useState([]);
+
+    useEffect(() => {
+        const savedScans = JSON.parse(localStorage.getItem('agriGuardScans') || '[]');
+        setRecentScans(savedScans.slice(0, 5)); // Show up to 5 most recent
+    }, []);
 
     return (
         <div className="space-y-6 pb-24 px-4 pt-4">
@@ -131,14 +132,25 @@ const Home = () => {
             <div>
                 <div className="flex items-center justify-between mb-4 px-2">
                     <h3 className="font-black text-gray-900 text-lg tracking-tight">{t('home.recent_scans')}</h3>
-                    <button className="text-agri-green-600 text-xs font-bold uppercase tracking-widest hover:text-agri-green-700">{t('home.view_all')}</button>
+                    <button
+                        onClick={() => navigate('/history')}
+                        className="text-agri-green-600 text-xs font-bold uppercase tracking-widest hover:text-agri-green-700"
+                    >
+                        {t('home.view_all')}
+                    </button>
                 </div>
 
                 <div className="flex gap-4 overflow-x-auto pb-6 -mx-4 px-4 scrollbar-hide snap-x">
-                    {recentScans.map((scan) => (
-                        <Card key={scan.id} className="min-w-[160px] flex-shrink-0 snap-center border-none shadow-lg shadow-gray-200" onClick={() => navigate(`/result?id=${scan.id}`)}>
-                            <div className="h-32 w-full relative overflow-hidden">
-                                <img src={scan.img} alt={scan.crop} className="w-full h-full object-cover transition-transform duration-500 hover:scale-110" />
+                    {recentScans.length > 0 ? recentScans.map((scan) => (
+                        <Card key={scan.id} className="min-w-[160px] flex-shrink-0 snap-center border-none shadow-lg shadow-gray-200" onClick={() => navigate('/result', { state: { scanResult: scan } })}>
+                            <div className="h-32 w-full relative overflow-hidden bg-gray-100">
+                                {scan.img ? (
+                                    <img src={scan.img} alt={scan.crop} className="w-full h-full object-cover transition-transform duration-500 hover:scale-110" />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                        <Camera className="w-8 h-8" />
+                                    </div>
+                                )}
                                 <div className={`absolute top-3 right-3 px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-md ${scan.status === 'healthy' ? 'bg-green-500 text-white' :
                                     scan.status === 'critical' ? 'bg-red-500 text-white' : 'bg-orange-500 text-white'
                                     }`}>
@@ -149,11 +161,16 @@ const Home = () => {
                                 <h4 className="font-bold text-gray-900 tracking-tight">{scan.disease}</h4>
                                 <div className="flex justify-between items-center mt-2">
                                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">{scan.crop}</span>
-                                    <span className="text-[10px] font-bold text-gray-300">{scan.date}</span>
+                                    <span className="text-[10px] font-bold text-gray-300">{scan.time}</span>
                                 </div>
                             </div>
                         </Card>
-                    ))}
+                    )) : (
+                        <div className="w-full text-center py-8 text-gray-400">
+                            <Camera className="w-10 h-10 mx-auto mb-2 opacity-30" />
+                            <p className="text-sm font-medium">No scans yet. Tap "Scan Crop" to start!</p>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

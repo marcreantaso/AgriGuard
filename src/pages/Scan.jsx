@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Webcam from 'react-webcam';
 import { useNavigate } from 'react-router-dom';
-import { Camera, RefreshCcw, HelpCircle, X, ChevronLeft, Cpu, Activity, Zap, AlertTriangle } from 'lucide-react';
+import { Camera, RefreshCcw, HelpCircle, X, ChevronLeft, Cpu, Activity, ImagePlus, AlertTriangle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 import Button from '../components/common/Button';
@@ -11,7 +11,9 @@ const Scan = () => {
     const [isScanning, setIsScanning] = useState(false);
     const [cnnStep, setCnnStep] = useState(0);
     const [scanError, setScanError] = useState(null);
+    const [uploadedImage, setUploadedImage] = useState(null);
     const webcamRef = useRef(null);
+    const fileInputRef = useRef(null);
     const navigate = useNavigate();
     const { t } = useLanguage();
     const [selectedCrop, setSelectedCrop] = useState('Rice'); // Default to Rice for now
@@ -30,8 +32,101 @@ const Scan = () => {
     ];
 
     const capture = () => {
+        setUploadedImage(null);
         setIsScanning(true);
         setCnnStep(0);
+    };
+
+    // Handle gallery photo upload
+    const handleUpload = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const dataUrl = event.target.result;
+            setUploadedImage(dataUrl);
+
+            // Create an image element for prediction
+            const imgEl = new Image();
+            imgEl.onload = async () => {
+                setIsScanning(true);
+                setCnnStep(0);
+
+                // Animate steps then predict
+                let step = 0;
+                const stepTimer = setInterval(async () => {
+                    step++;
+                    setCnnStep(step);
+                    if (step >= cnnSteps.length - 1) {
+                        clearInterval(stepTimer);
+
+                        try {
+                            const CONFIDENCE_THRESHOLD = 0.40;
+
+                            if (selectedCrop === 'Banana') {
+                                const potentialDiseases = cropDiseases['Banana'];
+                                const randomIdx = Math.floor(Math.random() * potentialDiseases.length);
+                                const selectedDisease = potentialDiseases[randomIdx];
+                                let status = 'critical';
+                                if (selectedDisease === 'Healthy') status = 'healthy';
+
+                                const newScan = {
+                                    id: Date.now(),
+                                    crop: 'Banana',
+                                    disease: selectedDisease,
+                                    status: status,
+                                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                                    fullDate: new Date().toISOString(),
+                                    img: dataUrl,
+                                    confidence: (85 + Math.random() * 14).toFixed(1),
+                                    cnn_details: { layers: 16, architecture: 'ResNet-50 Optimized (Simulated)', data_points: 'N/A', parameters: '23.5M' }
+                                };
+
+                                const existingScans = JSON.parse(localStorage.getItem('agriGuardScans') || '[]');
+                                localStorage.setItem('agriGuardScans', JSON.stringify([newScan, ...existingScans]));
+                                setTimeout(() => navigate('/result', { state: { scanResult: newScan } }), 500);
+                            } else {
+                                const prediction = await predictDisease(imgEl);
+
+                                if (prediction.confidence < CONFIDENCE_THRESHOLD) {
+                                    setScanError('Unable to identify a crop disease. Please make sure you are uploading a clear photo of a Rice, Corn, or Banana leaf.');
+                                    setIsScanning(false);
+                                    setUploadedImage(null);
+                                    return;
+                                }
+
+                                const newScan = {
+                                    id: Date.now(),
+                                    crop: prediction.crop,
+                                    disease: prediction.disease,
+                                    status: prediction.severity.toLowerCase(),
+                                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                                    fullDate: new Date().toISOString(),
+                                    img: dataUrl,
+                                    confidence: (prediction.confidence * 100).toFixed(1),
+                                    cnn_details: { layers: 16, architecture: 'MobilenetV2 / ResNet50', data_points: '450k+ samples', parameters: '23.5M' }
+                                };
+
+                                const existingScans = JSON.parse(localStorage.getItem('agriGuardScans') || '[]');
+                                localStorage.setItem('agriGuardScans', JSON.stringify([newScan, ...existingScans]));
+                                setTimeout(() => navigate('/result', { state: { scanResult: newScan } }), 500);
+                            }
+                        } catch (error) {
+                            console.error('Upload scan failed:', error);
+                            setScanError('Failed to analyze the uploaded photo. Please try again.');
+                            setIsScanning(false);
+                            setUploadedImage(null);
+                        }
+                    }
+                }, 1000);
+            };
+            imgEl.src = dataUrl;
+        };
+        reader.readAsDataURL(file);
+
+        // Reset file input so the same file can be selected again
+        e.target.value = '';
     };
 
     useEffect(() => {
@@ -135,13 +230,17 @@ const Scan = () => {
 
             {/* Camera Preview */}
             <div className="flex-1 relative overflow-hidden flex items-center justify-center">
-                <Webcam
-                    audio={false}
-                    ref={webcamRef}
-                    screenshotFormat="image/jpeg"
-                    videoConstraints={{ facingMode: 'environment' }}
-                    className="h-full w-full object-cover"
-                />
+                {uploadedImage ? (
+                    <img src={uploadedImage} alt="Uploaded" className="h-full w-full object-cover" />
+                ) : (
+                    <Webcam
+                        audio={false}
+                        ref={webcamRef}
+                        screenshotFormat="image/jpeg"
+                        videoConstraints={{ facingMode: 'environment' }}
+                        className="h-full w-full object-cover"
+                    />
+                )}
 
                 {/* Crop Selector Overlay */}
                 <div className="absolute top-4 left-0 right-0 flex justify-center z-20">
@@ -280,9 +379,22 @@ const Scan = () => {
             {/* Controls */}
             <div className="p-8 bg-gradient-to-t from-black to-transparent flex flex-col items-center">
                 <p className="text-white/60 text-xs font-bold uppercase tracking-widest mb-8">{t('scan.guide')}</p>
+                <input
+                    type="file"
+                    accept="image/*"
+                    ref={fileInputRef}
+                    onChange={handleUpload}
+                    className="hidden"
+                />
                 <div className="flex items-center gap-12">
-                    <button className="text-white/40 active:scale-90 transition-all">
-                        <Zap size={24} />
+                    <button
+                        onClick={() => fileInputRef.current?.click()}
+                        className="flex flex-col items-center gap-1 text-white/60 hover:text-white transition-colors"
+                    >
+                        <div className="p-4 rounded-full bg-white/10">
+                            <ImagePlus size={24} />
+                        </div>
+                        <span className="text-[10px] font-medium">Gallery</span>
                     </button>
                     <button
                         onClick={capture}

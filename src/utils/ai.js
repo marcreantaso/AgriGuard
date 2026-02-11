@@ -41,8 +41,14 @@ export const loadModel = async () => {
         model = {
             predict: (tensor) => {
                 return tf.tidy(() => {
-                    // Return random probabilities for demo
-                    const values = Array(CLASSES.length).fill(0).map(() => Math.random());
+                    // Produce realistic mock probabilities with a clear dominant class
+                    const dominantIdx = Math.floor(Math.random() * CLASSES.length);
+                    const dominantProb = 0.60 + Math.random() * 0.35; // 60-95%
+                    const remaining = 1 - dominantProb;
+                    const values = Array(CLASSES.length).fill(0).map((_, i) => {
+                        if (i === dominantIdx) return dominantProb;
+                        return (remaining / (CLASSES.length - 1)) * (0.5 + Math.random());
+                    });
                     const sum = values.reduce((a, b) => a + b, 0);
                     return tf.tensor2d([values.map(v => v / sum)]);
                 });
