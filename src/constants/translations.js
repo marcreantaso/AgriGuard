@@ -11,6 +11,11 @@ export const translations = {
             find_stores: "Find Stores Nearby",
             view_shop: "View Shop",
             away: "away",
+            shops_nearby: "Shops Nearby",
+            get_directions: "Get Directions",
+            call_shop: "Call Shop",
+            open_until: "Open until",
+            verified_shop: "Verified Partner",
         },
         home: {
             greeting: "Good day,",
@@ -137,6 +142,11 @@ export const translations = {
             find_stores: "Maghanap ng Tindahan",
             view_shop: "Tingnan ang Shop",
             away: "layo",
+            shops_nearby: "Mga Tindahan",
+            get_directions: "Tingnan ang Direksyon",
+            call_shop: "Tumawag",
+            open_until: "Bukas hanggang",
+            verified_shop: "Veripikadong Partner",
         },
         home: {
             greeting: "Magandang araw,",

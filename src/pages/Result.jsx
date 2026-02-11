@@ -121,14 +121,23 @@ const Result = () => {
                                     <ShieldCheck size={18} className="text-agri-green-600" />
                                     <h3 className="font-black text-agri-green-700 uppercase tracking-widest text-xs">{t('result.treatment_label')}</h3>
                                 </div>
-                                <ul className="space-y-3">
+                                <div className="">
                                     {result.recommendations.map((rec, i) => (
-                                        <li key={i} className="flex items-start gap-3">
-                                            <div className="w-5 h-5 bg-white rounded-lg flex items-center justify-center text-agri-green-600 text-[10px] font-black flex-shrink-0 border border-agri-green-100 shadow-sm">{i + 1}</div>
-                                            <p className="text-xs text-agri-green-800 font-bold leading-relaxed">{rec}</p>
-                                        </li>
+                                        <div key={i} className="flex gap-4">
+                                            <div className="flex flex-col items-center">
+                                                <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center text-agri-green-600 text-[10px] font-black border-2 border-agri-green-200 shadow-sm shrink-0 z-10">
+                                                    {i + 1}
+                                                </div>
+                                                {i !== result.recommendations.length - 1 && (
+                                                    <div className="w-0.5 flex-1 bg-agri-green-200 my-1"></div>
+                                                )}
+                                            </div>
+                                            <div className="pb-4">
+                                                <p className="text-sm text-agri-green-900 font-bold leading-relaxed">{rec}</p>
+                                            </div>
+                                        </div>
                                     ))}
-                                </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -155,7 +164,10 @@ const Result = () => {
                     >
                         {t('common.scan_again')}
                     </button>
-                    <button className="flex-1 bg-agri-green-500 text-white font-black py-4 rounded-2xl active:scale-95 transition-all shadow-lg shadow-agri-green-200 hover:bg-agri-green-600">
+                    <button
+                        onClick={() => navigate('/shops', { state: { scanResult: result } })}
+                        className="flex-1 bg-agri-green-500 text-white font-black py-4 rounded-2xl active:scale-95 transition-all shadow-lg shadow-agri-green-200 hover:bg-agri-green-600"
+                    >
                         {t('common.view_shop')}
                     </button>
                 </div>

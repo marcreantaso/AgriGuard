@@ -9,6 +9,7 @@ import Scan from './pages/Scan';
 import Result from './pages/Result';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
+import ShopLocator from './pages/ShopLocator';
 
 import History from './pages/History';
 import ErrorBoundary from './components/common/ErrorBoundary';
@@ -43,6 +44,7 @@ const App = () => {
                                     <Route index element={<Home />} />
                                     <Route path="scan" element={<Scan />} />
                                     <Route path="result" element={<Result />} />
+                                    <Route path="shops" element={<ShopLocator />} />
                                     <Route path="profile" element={<Profile />} />
                                     <Route path="history" element={<History />} />
                                 </Route>
