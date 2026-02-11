@@ -5,7 +5,7 @@ import { Camera, RefreshCcw, HelpCircle, X, ChevronLeft, Cpu, Activity, ImagePlu
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 import Button from '../components/common/Button';
-import { predictDisease } from '../utils/ai';
+import { predictDisease, isLikelyLeaf } from '../utils/ai';
 
 const Scan = () => {
     const [isScanning, setIsScanning] = useState(false);
@@ -20,9 +20,9 @@ const Scan = () => {
 
     // Mock data for simulation
     const cropDiseases = {
-        'Rice': ['Rice Blast', 'Leaf Blight', 'Tungro Virus', 'Healthy'],
-        'Corn': ['Corn Smut', 'Healthy'], // Add Corn Smut to diseases if not already there, or generic
-        'Banana': ['Panama Disease', 'Sigatoka', 'Bunchy Top']
+        'Rice': ['Rice Blast', 'Leaf Blight', 'Brown Spot', 'Healthy'],
+        'Corn': ['Common Rust', 'Gray Leaf Spot', 'Northern Leaf Blight', 'Healthy'],
+        'Banana': ['Panama Disease', 'Black Sigatoka', 'Healthy']
     };
 
     const cnnSteps = [
@@ -50,6 +50,14 @@ const Scan = () => {
             // Create an image element for prediction
             const imgEl = new Image();
             imgEl.onload = async () => {
+                // Pre-check: does this image look like a leaf?
+                if (!isLikelyLeaf(imgEl)) {
+                    setScanError('This doesn\'t appear to be a crop leaf. AgriGuard can only identify diseases on Rice, Corn, or Banana leaves — not grains, cooked food, clothing, or other items. Please upload a clear photo of a fresh leaf.');
+                    setIsScanning(false);
+                    setUploadedImage(null);
+                    return;
+                }
+
                 setIsScanning(true);
                 setCnnStep(0);
 
@@ -143,18 +151,21 @@ const Scan = () => {
                                 const videoElement = webcamRef.current?.video;
                                 let newScan;
 
-                                const CONFIDENCE_THRESHOLD = 0.40; // 40% minimum
+                                const CONFIDENCE_THRESHOLD = 0.40;
 
-                                // Hybrid Strategy:
-                                // Use ML Model for Rice and Corn (as trained)
-                                // Use Simulation for Banana (since model doesn't support it yet)
+                                // Pre-check: does this image look like a leaf?
+                                if (videoElement && !isLikelyLeaf(videoElement)) {
+                                    setScanError('This doesn\'t appear to be a crop leaf. AgriGuard can only identify diseases on Rice, Corn, or Banana leaves — not grains, cooked food, clothing, or other items. Please point the camera at a fresh leaf.');
+                                    setIsScanning(false);
+                                    return;
+                                }
+
                                 if (selectedCrop === 'Banana' || !videoElement) {
                                     // SIMULATION LOGIC for Banana
                                     const potentialDiseases = cropDiseases['Banana'];
                                     const randomIdx = Math.floor(Math.random() * potentialDiseases.length);
                                     const selectedDisease = potentialDiseases[randomIdx];
 
-                                    // Mock status
                                     let status = 'critical';
                                     if (selectedDisease === 'Healthy') status = 'healthy';
 
@@ -173,9 +184,8 @@ const Scan = () => {
                                     // ML LOGIC for Rice/Corn
                                     const prediction = await predictDisease(videoElement);
 
-                                    // Error handling: reject if confidence below threshold
                                     if (prediction.confidence < CONFIDENCE_THRESHOLD) {
-                                        setScanError('This doesn\'t appear to be a crop leaf. AgriGuard can only identify diseases on Rice, Corn, or Banana leaves — not grains, cooked rice, or other items. Please scan a fresh leaf.');
+                                        setScanError('This doesn\'t appear to be a crop leaf. AgriGuard can only identify diseases on Rice, Corn, or Banana leaves — not grains, cooked food, clothing, or other items. Please scan a fresh leaf.');
                                         setIsScanning(false);
                                         return;
                                     }

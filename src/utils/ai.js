@@ -1,5 +1,54 @@
 import * as tf from '@tensorflow/tfjs';
 
+/**
+ * Checks if an image likely contains a leaf by analyzing green pixel content.
+ * Rejects non-leaf images like jackets, cooked rice, random objects.
+ * @param {HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} imgElement
+ * @returns {boolean} true if the image likely contains a plant/leaf
+ */
+export const isLikelyLeaf = (imgElement) => {
+    try {
+        const canvas = document.createElement('canvas');
+        const size = 100; // Sample at 100x100 for speed
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(imgElement, 0, 0, size, size);
+        const imageData = ctx.getImageData(0, 0, size, size);
+        const data = imageData.data;
+
+        let greenPixels = 0;
+        let brownGreenPixels = 0;
+        const totalPixels = size * size;
+
+        for (let i = 0; i < data.length; i += 4) {
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+
+            // Detect green/vegetation-like pixels
+            // Green channel is dominant and bright enough
+            if (g > 50 && g > r * 1.1 && g > b * 1.1) {
+                greenPixels++;
+            }
+            // Also detect brownish-green leaves (diseased leaves are often brown/yellow)
+            if (g > 40 && r > 40 && g > b && r < 200 && (g + r) > 100 && b < Math.min(r, g)) {
+                brownGreenPixels++;
+            }
+        }
+
+        const greenRatio = greenPixels / totalPixels;
+        const brownGreenRatio = brownGreenPixels / totalPixels;
+        const combinedRatio = greenRatio + (brownGreenRatio * 0.3);
+
+        // At least 8% of pixels should look like vegetation
+        return combinedRatio > 0.08;
+    } catch (e) {
+        console.warn('Leaf check failed, allowing scan:', e);
+        return true; // If check fails, allow the scan
+    }
+};
+
 // Configuration
 const MODEL_PATH = '/models/agri-guard-v1/model.json';
 const CLASSES = [
