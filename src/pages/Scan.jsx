@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Webcam from 'react-webcam';
 import { useNavigate } from 'react-router-dom';
-import { Camera, RefreshCcw, HelpCircle, X, ChevronLeft, Cpu, Activity, Zap } from 'lucide-react';
+import { Camera, RefreshCcw, HelpCircle, X, ChevronLeft, Cpu, Activity, Zap, AlertTriangle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 import Button from '../components/common/Button';
@@ -10,6 +10,7 @@ import { predictDisease } from '../utils/ai';
 const Scan = () => {
     const [isScanning, setIsScanning] = useState(false);
     const [cnnStep, setCnnStep] = useState(0);
+    const [scanError, setScanError] = useState(null);
     const webcamRef = useRef(null);
     const navigate = useNavigate();
     const { t } = useLanguage();
@@ -47,6 +48,8 @@ const Scan = () => {
                                 const videoElement = webcamRef.current?.video;
                                 let newScan;
 
+                                const CONFIDENCE_THRESHOLD = 0.40; // 40% minimum
+
                                 // Hybrid Strategy:
                                 // Use ML Model for Rice and Corn (as trained)
                                 // Use Simulation for Banana (since model doesn't support it yet)
@@ -67,7 +70,7 @@ const Scan = () => {
                                         status: status,
                                         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                                         fullDate: new Date().toISOString(),
-                                        img: imageSrc || 'https://images.unsplash.com/photo-1603052875302-d376b7c0638a?auto=format&fit=crop&q=80',
+                                        img: imageSrc,
                                         confidence: (85 + Math.random() * 14).toFixed(1),
                                         cnn_details: { layers: 16, architecture: 'ResNet-50 Optimized (Simulated)', data_points: 'N/A', parameters: '23.5M' }
                                     };
@@ -75,9 +78,12 @@ const Scan = () => {
                                     // ML LOGIC for Rice/Corn
                                     const prediction = await predictDisease(videoElement);
 
-                                    // If the user selected a crop, but model detected otherwise, we might want to warn
-                                    // But for now, let's trust the model OR override if confidence is low. 
-                                    // We will use the Model's prediction completely.
+                                    // Error handling: reject if confidence below threshold
+                                    if (prediction.confidence < CONFIDENCE_THRESHOLD) {
+                                        setScanError('Unable to identify a crop disease. Please make sure you are scanning a Rice, Corn, or Banana leaf clearly.');
+                                        setIsScanning(false);
+                                        return;
+                                    }
 
                                     newScan = {
                                         id: Date.now(),
@@ -86,7 +92,7 @@ const Scan = () => {
                                         status: prediction.severity.toLowerCase(),
                                         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                                         fullDate: new Date().toISOString(),
-                                        img: imageSrc || 'https://images.unsplash.com/photo-1594489428504-5c0c480a15fd?auto=format&fit=crop&q=80',
+                                        img: imageSrc,
                                         confidence: (prediction.confidence * 100).toFixed(1),
                                         cnn_details: { layers: 16, architecture: 'MobilenetV2 / ResNet50', data_points: '450k+ samples', parameters: '23.5M' }
                                     };
@@ -233,6 +239,39 @@ const Scan = () => {
                                     ))}
                                 </div>
                             </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Error Modal */}
+                <AnimatePresence>
+                    {scanError && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="absolute inset-0 bg-black/80 backdrop-blur-sm z-30 flex flex-col items-center justify-center p-8"
+                            onClick={() => setScanError(null)}
+                        >
+                            <motion.div
+                                initial={{ scale: 0.8, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.8, opacity: 0 }}
+                                className="bg-white rounded-3xl p-8 w-full max-w-sm shadow-2xl text-center"
+                                onClick={e => e.stopPropagation()}
+                            >
+                                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <AlertTriangle size={32} className="text-red-500" />
+                                </div>
+                                <h3 className="text-lg font-black text-gray-900 mb-2">Scan Failed</h3>
+                                <p className="text-sm text-gray-600 mb-6">{scanError}</p>
+                                <button
+                                    onClick={() => setScanError(null)}
+                                    className="w-full py-3 rounded-2xl bg-agri-green-500 text-white font-bold text-sm active:scale-95 transition-all"
+                                >
+                                    Try Again
+                                </button>
+                            </motion.div>
                         </motion.div>
                     )}
                 </AnimatePresence>
