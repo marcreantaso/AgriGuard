@@ -12,6 +12,14 @@ const Scan = () => {
     const webcamRef = useRef(null);
     const navigate = useNavigate();
     const { t } = useLanguage();
+    const [selectedCrop, setSelectedCrop] = useState('Rice'); // Default to Rice for now
+
+    // Mock data for simulation
+    const cropDiseases = {
+        'Rice': ['Rice Blast', 'Leaf Blight', 'Tungro Virus', 'Healthy'],
+        'Corn': ['Corn Smut', 'Healthy'], // Add Corn Smut to diseases if not already there, or generic
+        'Banana': ['Panama Disease', 'Sigatoka', 'Bunchy Top']
+    };
 
     const cnnSteps = [
         t('scan.cnn_steps.extracting'),
@@ -34,15 +42,22 @@ const Scan = () => {
                         // Capture image and save to "database"
                         const imageSrc = webcamRef.current?.getScreenshot();
                         const scanId = Date.now();
-                        const diseases = ['Rice Blast', 'Leaf Blight', 'Tungro Virus', 'Healthy'];
-                        const statuses = ['critical', 'mild', 'critical', 'healthy'];
-                        const randomIdx = Math.floor(Math.random() * diseases.length);
+
+                        // Select disease based on selected crop
+                        const potentialDiseases = cropDiseases[selectedCrop] || cropDiseases['Rice'];
+                        const randomIdx = Math.floor(Math.random() * potentialDiseases.length);
+                        const selectedDisease = potentialDiseases[randomIdx];
+
+                        // Determine status based on disease name (Mock logic)
+                        let status = 'critical';
+                        if (selectedDisease === 'Healthy') status = 'healthy';
+                        if (selectedDisease === 'Corn Smut') status = 'mild';
 
                         const newScan = {
                             id: scanId,
-                            crop: 'Rice',
-                            disease: diseases[randomIdx],
-                            status: statuses[randomIdx],
+                            crop: selectedCrop,
+                            disease: selectedDisease,
+                            status: status,
                             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                             fullDate: new Date().toISOString(),
                             img: imageSrc || 'https://images.unsplash.com/photo-1594489428504-5c0c480a15fd?auto=format&fit=crop&q=80&w=200&h=200',
@@ -92,6 +107,24 @@ const Scan = () => {
                     className="h-full w-full object-cover"
                 />
 
+                {/* Crop Selector Overlay */}
+                <div className="absolute top-4 left-0 right-0 flex justify-center z-20">
+                    <div className="bg-black/50 backdrop-blur-md p-1 rounded-full flex gap-1">
+                        {Object.keys(cropDiseases).map(crop => (
+                            <button
+                                key={crop}
+                                onClick={() => setSelectedCrop(crop)}
+                                className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${selectedCrop === crop
+                                    ? 'bg-agri-green-500 text-white shadow-lg'
+                                    : 'text-white/70 hover:bg-white/10'
+                                    }`}
+                            >
+                                {crop}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
                 {/* CNN Scan Overlay */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <div className="w-72 h-72 border-2 border-white/30 rounded-[40px] relative overflow-hidden">
@@ -100,6 +133,29 @@ const Scan = () => {
                             transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
                             className="absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-agri-green-400 to-transparent shadow-[0_0_15px_rgba(74,222,128,0.8)] z-10"
                         />
+
+                        {/* Simulated Object Detection Boxes */}
+                        {isScanning && (
+                            <>
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.8 }}
+                                    animate={{ opacity: [0, 1, 0], scale: 1 }}
+                                    transition={{ duration: 0.8, repeat: Infinity, repeatDelay: 0.5 }}
+                                    className="absolute top-10 left-10 w-20 h-20 border-2 border-yellow-400/70 rounded-lg"
+                                >
+                                    <div className="absolute -top-4 left-0 bg-yellow-400/90 text-[8px] text-black font-bold px-1 rounded">Leaf</div>
+                                </motion.div>
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: [0, 1, 0], scale: 1 }}
+                                    transition={{ duration: 1.2, repeat: Infinity, repeatDelay: 0.2, delay: 0.3 }}
+                                    className="absolute bottom-12 right-8 w-16 h-16 border-2 border-red-400/70 rounded-lg"
+                                >
+                                    <div className="absolute -top-4 left-0 bg-red-400/90 text-[8px] text-white font-bold px-1 rounded">Spot</div>
+                                </motion.div>
+                            </>
+                        )}
+
                         <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.5)]"></div>
                     </div>
                 </div>

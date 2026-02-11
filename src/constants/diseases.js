@@ -62,6 +62,45 @@ export const diseases = {
             "Apply maintenance fertilizer as scheduled."
         ],
         img: 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?auto=format&fit=crop&q=80&w=800'
+    },
+    // Banana Diseases
+    'Panama Disease': {
+        crop: 'Banana',
+        disease: 'Panama Disease',
+        status: 'critical',
+        description: "Also known as Fusarium Wilt. A soil-borne fungal disease that causes yellowing of older leaves, splitting of the stem base, and eventual death of the plant.",
+        treatment: [
+            "Quarantine infected areas immediately.",
+            "Disinfect tools and footwear with bleach solution.",
+            "Use disease-free planting materials (tissue culture).",
+            "There is no chemical cure; infected plants must be destroyed."
+        ],
+        img: 'https://images.unsplash.com/photo-1603052875302-d376b7c0638a?auto=format&fit=crop&q=80&w=800' // Banana leaf
+    },
+    'Sigatoka': {
+        crop: 'Banana',
+        disease: 'Black Sigatoka',
+        status: 'critical',
+        description: "Fungal leaf spot disease. Causes dark streaks on leaves that enlarge into spots with gray centers. heavily reduces photosynthetic area and yield.",
+        treatment: [
+            "De-leafing: Remove and burn infected leaves.",
+            "Apply fungicides (Rotate modes of action to prevent resistance).",
+            "Improve drainage and spacing to reduce humidity.",
+            "Apply proper nutrition (Potassium and Silica)."
+        ],
+        img: 'https://images.unsplash.com/photo-1527063836104-a21237eb64b0?auto=format&fit=crop&q=80&w=800'
+    },
+    'Bunchy Top': {
+        crop: 'Banana',
+        disease: 'Banana Bunchy Top',
+        status: 'critical',
+        description: "Viral disease transmitted by aphids. Leaves become narrow, short, and upright ('bunchy'), with chlorotic margins. The plant stops growing and bears no fruit.",
+        treatment: [
+            "Control aphid vectors with insecticides.",
+            "Inject herbicide (glyphosate) to kill the infected mat.",
+            "Dig out and burn the infected mat.",
+            "Replant with virus-free tissue-cultured plantlets."
+        ]
     }
 };
 
