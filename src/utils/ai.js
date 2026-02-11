@@ -1,24 +1,38 @@
 import * as tf from '@tensorflow/tfjs';
 
 /**
- * Checks if an image likely contains a leaf by analyzing green pixel content.
+ * Checks if an image likely contains a leaf by analyzing green/vegetation pixel content.
  * Rejects non-leaf images like jackets, cooked rice, random objects.
- * @param {HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} imgElement
- * @returns {boolean} true if the image likely contains a plant/leaf
+ * Accepts HTMLImageElement, HTMLCanvasElement, HTMLVideoElement, or base64 data URL string.
+ * @param {HTMLImageElement|HTMLCanvasElement|HTMLVideoElement|string} input
+ * @returns {Promise<boolean>} true if the image likely contains a plant/leaf
  */
-export const isLikelyLeaf = (imgElement) => {
+export const isLikelyLeaf = async (input) => {
     try {
         const canvas = document.createElement('canvas');
-        const size = 100; // Sample at 100x100 for speed
+        const size = 100;
         canvas.width = size;
         canvas.height = size;
         const ctx = canvas.getContext('2d');
+
+        // If input is a base64 string, load it as an image first
+        let imgElement = input;
+        if (typeof input === 'string') {
+            imgElement = await new Promise((resolve, reject) => {
+                const img = new window.Image();
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+                img.src = input;
+            });
+        }
+
         ctx.drawImage(imgElement, 0, 0, size, size);
         const imageData = ctx.getImageData(0, 0, size, size);
         const data = imageData.data;
 
         let greenPixels = 0;
         let brownGreenPixels = 0;
+        let yellowPixels = 0;
         const totalPixels = size * size;
 
         for (let i = 0; i < data.length; i += 4) {
@@ -26,26 +40,30 @@ export const isLikelyLeaf = (imgElement) => {
             const g = data[i + 1];
             const b = data[i + 2];
 
-            // Detect green/vegetation-like pixels
-            // Green channel is dominant and bright enough
-            if (g > 50 && g > r * 1.1 && g > b * 1.1) {
+            // Pure green / vegetation
+            if (g > 60 && g > r * 1.15 && g > b * 1.15) {
                 greenPixels++;
             }
-            // Also detect brownish-green leaves (diseased leaves are often brown/yellow)
-            if (g > 40 && r > 40 && g > b && r < 200 && (g + r) > 100 && b < Math.min(r, g)) {
+            // Brown-green (diseased/dried leaves)
+            if (g > 40 && r > 40 && g > b * 1.2 && r < 220 && b < Math.min(r, g) * 0.85) {
                 brownGreenPixels++;
+            }
+            // Yellow/amber (yellowing leaves)
+            if (r > 120 && g > 100 && b < 80 && r > b * 1.5 && g > b * 1.3) {
+                yellowPixels++;
             }
         }
 
         const greenRatio = greenPixels / totalPixels;
         const brownGreenRatio = brownGreenPixels / totalPixels;
-        const combinedRatio = greenRatio + (brownGreenRatio * 0.3);
+        const yellowRatio = yellowPixels / totalPixels;
+        const combinedRatio = greenRatio + (brownGreenRatio * 0.4) + (yellowRatio * 0.3);
 
-        // At least 8% of pixels should look like vegetation
-        return combinedRatio > 0.08;
+        // At least 12% of pixels should look like vegetation/leaf material
+        return combinedRatio > 0.12;
     } catch (e) {
         console.warn('Leaf check failed, allowing scan:', e);
-        return true; // If check fails, allow the scan
+        return true;
     }
 };
 

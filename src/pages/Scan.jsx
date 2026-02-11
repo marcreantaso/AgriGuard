@@ -16,13 +16,11 @@ const Scan = () => {
     const fileInputRef = useRef(null);
     const navigate = useNavigate();
     const { t } = useLanguage();
-    const [selectedCrop, setSelectedCrop] = useState('Rice'); // Default to Rice for now
+    const [selectedCrop, setSelectedCrop] = useState('Rice');
 
-    // Mock data for simulation
+    // Supported crop diseases (Rice only)
     const cropDiseases = {
-        'Rice': ['Rice Blast', 'Leaf Blight', 'Brown Spot', 'Healthy'],
-        'Corn': ['Common Rust', 'Gray Leaf Spot', 'Northern Leaf Blight', 'Healthy'],
-        'Banana': ['Panama Disease', 'Black Sigatoka', 'Healthy']
+        'Rice': ['Rice Blast', 'Leaf Blight', 'Brown Spot', 'Healthy']
     };
 
     const cnnSteps = [
@@ -51,9 +49,9 @@ const Scan = () => {
             const imgEl = new Image();
             imgEl.onload = async () => {
                 // Pre-check: does this image look like a leaf?
-                if (!isLikelyLeaf(imgEl)) {
-                    setScanError('This doesn\'t appear to be a crop leaf. AgriGuard can only identify diseases on Rice, Corn, or Banana leaves — not grains, cooked food, clothing, or other items. Please upload a clear photo of a fresh leaf.');
-                    setIsScanning(false);
+                const isLeaf = await isLikelyLeaf(imgEl);
+                if (!isLeaf) {
+                    setScanError('This doesn\'t appear to be a rice leaf. Please upload a clear photo of a fresh rice (palay) leaf.');
                     setUploadedImage(null);
                     return;
                 }
@@ -71,55 +69,30 @@ const Scan = () => {
 
                         try {
                             const CONFIDENCE_THRESHOLD = 0.40;
+                            const prediction = await predictDisease(imgEl);
 
-                            if (selectedCrop === 'Banana') {
-                                const potentialDiseases = cropDiseases['Banana'];
-                                const randomIdx = Math.floor(Math.random() * potentialDiseases.length);
-                                const selectedDisease = potentialDiseases[randomIdx];
-                                let status = 'critical';
-                                if (selectedDisease === 'Healthy') status = 'healthy';
-
-                                const newScan = {
-                                    id: Date.now(),
-                                    crop: 'Banana',
-                                    disease: selectedDisease,
-                                    status: status,
-                                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                                    fullDate: new Date().toISOString(),
-                                    img: dataUrl,
-                                    confidence: (85 + Math.random() * 14).toFixed(1),
-                                    cnn_details: { layers: 16, architecture: 'ResNet-50 Optimized (Simulated)', data_points: 'N/A', parameters: '23.5M' }
-                                };
-
-                                const existingScans = JSON.parse(localStorage.getItem('agriGuardScans') || '[]');
-                                localStorage.setItem('agriGuardScans', JSON.stringify([newScan, ...existingScans]));
-                                setTimeout(() => navigate('/result', { state: { scanResult: newScan } }), 500);
-                            } else {
-                                const prediction = await predictDisease(imgEl);
-
-                                if (prediction.confidence < CONFIDENCE_THRESHOLD) {
-                                    setScanError('This doesn\'t appear to be a crop leaf. AgriGuard can only identify diseases on Rice, Corn, or Banana leaves — not grains, cooked rice, or other items. Please scan a fresh leaf.');
-                                    setIsScanning(false);
-                                    setUploadedImage(null);
-                                    return;
-                                }
-
-                                const newScan = {
-                                    id: Date.now(),
-                                    crop: prediction.crop,
-                                    disease: prediction.disease,
-                                    status: prediction.severity.toLowerCase(),
-                                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                                    fullDate: new Date().toISOString(),
-                                    img: dataUrl,
-                                    confidence: (prediction.confidence * 100).toFixed(1),
-                                    cnn_details: { layers: 16, architecture: 'MobilenetV2 / ResNet50', data_points: '450k+ samples', parameters: '23.5M' }
-                                };
-
-                                const existingScans = JSON.parse(localStorage.getItem('agriGuardScans') || '[]');
-                                localStorage.setItem('agriGuardScans', JSON.stringify([newScan, ...existingScans]));
-                                setTimeout(() => navigate('/result', { state: { scanResult: newScan } }), 500);
+                            if (prediction.confidence < CONFIDENCE_THRESHOLD) {
+                                setScanError('This doesn\'t appear to be a rice leaf. Please upload a clear photo of a fresh rice (palay) leaf.');
+                                setIsScanning(false);
+                                setUploadedImage(null);
+                                return;
                             }
+
+                            const newScan = {
+                                id: Date.now(),
+                                crop: prediction.crop,
+                                disease: prediction.disease,
+                                status: prediction.severity.toLowerCase(),
+                                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                                fullDate: new Date().toISOString(),
+                                img: dataUrl,
+                                confidence: (prediction.confidence * 100).toFixed(1),
+                                cnn_details: { layers: 16, architecture: 'MobilenetV2 / ResNet50', data_points: '450k+ samples', parameters: '23.5M' }
+                            };
+
+                            const existingScans = JSON.parse(localStorage.getItem('agriGuardScans') || '[]');
+                            localStorage.setItem('agriGuardScans', JSON.stringify([newScan, ...existingScans]));
+                            setTimeout(() => navigate('/result', { state: { scanResult: newScan } }), 500);
                         } catch (error) {
                             console.error('Upload scan failed:', error);
                             setScanError('Failed to analyze the uploaded photo. Please try again.');
@@ -154,38 +127,22 @@ const Scan = () => {
                                 const CONFIDENCE_THRESHOLD = 0.40;
 
                                 // Pre-check: does this image look like a leaf?
-                                if (videoElement && !isLikelyLeaf(videoElement)) {
-                                    setScanError('This doesn\'t appear to be a crop leaf. AgriGuard can only identify diseases on Rice, Corn, or Banana leaves — not grains, cooked food, clothing, or other items. Please point the camera at a fresh leaf.');
-                                    setIsScanning(false);
-                                    return;
+                                // Use the screenshot (base64) for reliable cross-browser support
+                                if (imageSrc) {
+                                    const isLeaf = await isLikelyLeaf(imageSrc);
+                                    if (!isLeaf) {
+                                        setScanError('This doesn\'t appear to be a rice leaf. Please point the camera at a fresh rice (palay) leaf.');
+                                        setIsScanning(false);
+                                        return;
+                                    }
                                 }
 
-                                if (selectedCrop === 'Banana' || !videoElement) {
-                                    // SIMULATION LOGIC for Banana
-                                    const potentialDiseases = cropDiseases['Banana'];
-                                    const randomIdx = Math.floor(Math.random() * potentialDiseases.length);
-                                    const selectedDisease = potentialDiseases[randomIdx];
-
-                                    let status = 'critical';
-                                    if (selectedDisease === 'Healthy') status = 'healthy';
-
-                                    newScan = {
-                                        id: Date.now(),
-                                        crop: 'Banana',
-                                        disease: selectedDisease,
-                                        status: status,
-                                        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                                        fullDate: new Date().toISOString(),
-                                        img: imageSrc,
-                                        confidence: (85 + Math.random() * 14).toFixed(1),
-                                        cnn_details: { layers: 16, architecture: 'ResNet-50 Optimized (Simulated)', data_points: 'N/A', parameters: '23.5M' }
-                                    };
-                                } else {
-                                    // ML LOGIC for Rice/Corn
+                                // ML prediction for Rice
+                                if (videoElement) {
                                     const prediction = await predictDisease(videoElement);
 
                                     if (prediction.confidence < CONFIDENCE_THRESHOLD) {
-                                        setScanError('This doesn\'t appear to be a crop leaf. AgriGuard can only identify diseases on Rice, Corn, or Banana leaves — not grains, cooked food, clothing, or other items. Please scan a fresh leaf.');
+                                        setScanError('This doesn\'t appear to be a rice leaf. Please point the camera at a fresh rice (palay) leaf.');
                                         setIsScanning(false);
                                         return;
                                     }
@@ -201,6 +158,9 @@ const Scan = () => {
                                         confidence: (prediction.confidence * 100).toFixed(1),
                                         cnn_details: { layers: 16, architecture: 'MobilenetV2 / ResNet50', data_points: '450k+ samples', parameters: '23.5M' }
                                     };
+                                } else {
+                                    setIsScanning(false);
+                                    return;
                                 }
 
                                 // Save to localStorage
@@ -252,21 +212,10 @@ const Scan = () => {
                     />
                 )}
 
-                {/* Crop Selector Overlay */}
+                {/* Rice Label Overlay */}
                 <div className="absolute top-4 left-0 right-0 flex justify-center z-20">
-                    <div className="bg-black/50 backdrop-blur-md p-1 rounded-full flex gap-1">
-                        {Object.keys(cropDiseases).map(crop => (
-                            <button
-                                key={crop}
-                                onClick={() => setSelectedCrop(crop)}
-                                className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${selectedCrop === crop
-                                    ? 'bg-agri-green-500 text-white shadow-lg'
-                                    : 'text-white/70 hover:bg-white/10'
-                                    }`}
-                            >
-                                {crop}
-                            </button>
-                        ))}
+                    <div className="bg-black/50 backdrop-blur-md px-5 py-2 rounded-full">
+                        <span className="text-xs font-bold uppercase tracking-wider text-white">Rice (Palay)</span>
                     </div>
                 </div>
 
