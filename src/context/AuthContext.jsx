@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { authApi } from '../utils/api';
+import { tokenStorage } from '../utils/tokenStorage';
 
 const AuthContext = createContext();
 
@@ -7,93 +9,127 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
+    // Initialize auth state from stored token
     useEffect(() => {
-        const checkAuth = async () => {
-            const storedUser = localStorage.getItem('agriGuardUser');
-            if (storedUser) {
-                await new Promise(resolve => setTimeout(resolve, 500));
-                setUser(JSON.parse(storedUser));
-            }
+        const initializeAuth = async () => {
+            setLoading(true);
+            setError(null);
 
-            // Initialize users database if not exists
-            if (!localStorage.getItem('agriGuardUsers')) {
-                localStorage.setItem('agriGuardUsers', JSON.stringify([
-                    { email: 'farmer@agri.com', password: 'password123', name: 'Juan Dela Cruz', joined: new Date().toISOString() }
-                ]));
-            }
+            try {
+                const storedUser = tokenStorage.getUser();
+                const token = tokenStorage.getToken();
 
-            setLoading(false);
+                if (token && storedUser) {
+                    // Verify token is still valid
+                    try {
+                        const response = await authApi.verify();
+                        setUser(response.user);
+                    } catch (verifyError) {
+                        // Token is invalid, clear storage
+                        tokenStorage.clear();
+                        setUser(null);
+                    }
+                } else {
+                    setUser(null);
+                }
+            } catch (err) {
+                console.error('Auth initialization error:', err);
+                setError(err.message);
+                setUser(null);
+            } finally {
+                setLoading(false);
+            }
         };
-        checkAuth();
+
+        initializeAuth();
     }, []);
 
     const login = async (email, password) => {
         setLoading(true);
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        setError(null);
 
-        const users = JSON.parse(localStorage.getItem('agriGuardUsers') || '[]');
-        const foundUser = users.find(u => u.email === email && u.password === password);
-
-        if (foundUser) {
-            setUser(foundUser);
-            localStorage.setItem('agriGuardUser', JSON.stringify(foundUser));
+        try {
+            const response = await authApi.login(email, password);
+            setUser(response.user);
+            return response;
+        } catch (err) {
+            setError(err.message || 'Login failed');
+            setUser(null);
+            throw err;
+        } finally {
             setLoading(false);
-            return true;
         }
-
-        setLoading(false);
-        throw new Error('Invalid credentials');
     };
 
     const signup = async (userData) => {
         setLoading(true);
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        setError(null);
 
-        const users = JSON.parse(localStorage.getItem('agriGuardUsers') || '[]');
-        if (users.find(u => u.email === userData.email)) {
+        try {
+            const response = await authApi.signup(userData);
+            setUser(response.user);
+            return response;
+        } catch (err) {
+            setError(err.message || 'Signup failed');
+            setUser(null);
+            throw err;
+        } finally {
             setLoading(false);
-            throw new Error('User already exists');
         }
-
-        const newUser = {
-            ...userData,
-            joined: new Date().toISOString(),
-            id: 'farmer_' + Math.floor(Math.random() * 10000)
-        };
-
-        users.push(newUser);
-        localStorage.setItem('agriGuardUsers', JSON.stringify(users));
-        setUser(newUser);
-        localStorage.setItem('agriGuardUser', JSON.stringify(newUser));
-        setLoading(false);
-        return true;
     };
 
     const logout = async () => {
         setLoading(true);
-        await new Promise(resolve => setTimeout(resolve, 800));
-        setUser(null);
-        localStorage.removeItem('agriGuardUser');
-        setLoading(false);
-    };
+        setError(null);
 
-    const updateUser = (updates) => {
-        const updatedUser = { ...user, ...updates };
-        setUser(updatedUser);
-        localStorage.setItem('agriGuardUser', JSON.stringify(updatedUser));
-
-        // Update in users database as well
-        const users = JSON.parse(localStorage.getItem('agriGuardUsers') || '[]');
-        const userIndex = users.findIndex(u => u.email === user.email);
-        if (userIndex !== -1) {
-            users[userIndex] = { ...users[userIndex], ...updates };
-            localStorage.setItem('agriGuardUsers', JSON.stringify(users));
+        try {
+            await authApi.logout();
+            setUser(null);
+        } catch (err) {
+            console.error('Logout error:', err);
+            // Still clear user even if logout fails
+            setUser(null);
+        } finally {
+            setLoading(false);
         }
     };
 
+    const updateUser = async (updates) => {
+        try {
+            const response = await authApi.updateProfile(updates);
+            setUser(response.user);
+            return response.user;
+        } catch (err) {
+            setError(err.message || 'Update failed');
+            throw err;
+        }
+    };
+
+    const changePassword = async (currentPassword, newPassword) => {
+        try {
+            return await authApi.changePassword(currentPassword, newPassword);
+        } catch (err) {
+            setError(err.message || 'Password change failed');
+            throw err;
+        }
+    };
+
+    const value = {
+        user,
+        loading,
+        error,
+        login,
+        signup,
+        logout,
+        updateUser,
+        changePassword,
+        isAuthenticated: !!user && tokenStorage.hasToken()
+    };
+
     return (
-        <AuthContext.Provider value={{ user, login, signup, logout, loading, updateUser }}>
+        <AuthContext.Provider value={value}>
             {children}
         </AuthContext.Provider>
     );
