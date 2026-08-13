@@ -5,7 +5,10 @@ import { VitePWA } from 'vite-plugin-pwa'
 // https://vitejs.dev/config/
 export default defineConfig({
     plugins: [
-        react(),
+        react({
+            // Enable automatic JSX runtime optimization
+            jsxRuntime: 'automatic'
+        }),
         VitePWA({
             registerType: 'autoUpdate',
             includeAssets: ['logo.svg'],
@@ -33,4 +36,59 @@ export default defineConfig({
             }
         })
     ],
+    
+    // Build optimization
+    build: {
+        // Code splitting strategy
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    // Vendor chunks for better caching
+                    'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+                    'vendor-ui': ['framer-motion', 'lucide-react', 'sonner'],
+                    'vendor-utils': ['clsx', 'date-fns', 'tailwind-merge'],
+                    'vendor-ml': ['@tensorflow/tfjs'],
+                    'vendor-camera': ['react-webcam'],
+                    // Email service
+                    'vendor-email': ['@emailjs/browser']
+                }
+            }
+        },
+        // Minify and optimize
+        minify: 'terser',
+        terserOptions: {
+            compress: {
+                drop_console: true, // Remove console logs in production
+                drop_debugger: true
+            }
+        },
+        // Target modern browsers
+        target: 'esnext',
+        // Increase chunk size limit for initial load
+        chunkSizeWarningLimit: 1000,
+        // Report compressed size
+        reportCompressedSize: true
+    },
+
+    // Optimization
+    optimizeDeps: {
+        // Pre-bundle common dependencies
+        include: [
+            'react',
+            'react-dom',
+            'react-router-dom',
+            'framer-motion',
+            'clsx'
+        ],
+        // Exclude files that shouldn't be pre-bundled
+        exclude: ['@tensorflow/tfjs']
+    },
+
+    // Development server optimization
+    server: {
+        middlewareMode: false,
+        // Delay serving HTML files to improve reload performance
+        middlewareMode: false,
+        preTransformRequests: ['/index.html']
+    }
 })
