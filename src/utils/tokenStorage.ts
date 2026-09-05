@@ -3,7 +3,6 @@
  * Stores JWT tokens with XSS protection strategies
  */
 
-const TOKEN_KEY = 'agriguard_auth_token';
 const USER_KEY = 'agriguard_user_data';
 
 export const tokenStorage = {
@@ -11,37 +10,11 @@ export const tokenStorage = {
      * Set token in secure storage
      * Note: In production, consider using httpOnly cookies with a backend session
      */
-    setToken: (token) => {
-        try {
-            // Store in sessionStorage for better security (cleared when browser closes)
-            sessionStorage.setItem(TOKEN_KEY, token);
-            // Also backup in localStorage for page refresh persistence
-            localStorage.setItem(TOKEN_KEY, token);
-        } catch (error) {
-            console.error('Failed to store token:', error);
-        }
-    },
-
-    /**
-     * Get token from secure storage
-     */
-    getToken: () => {
-        try {
-            // Prefer sessionStorage, fallback to localStorage
-            return sessionStorage.getItem(TOKEN_KEY) || localStorage.getItem(TOKEN_KEY);
-        } catch (error) {
-            console.error('Failed to retrieve token:', error);
-            return null;
-        }
-    },
-
     /**
      * Remove token from storage
      */
     removeToken: () => {
         try {
-            sessionStorage.removeItem(TOKEN_KEY);
-            localStorage.removeItem(TOKEN_KEY);
             sessionStorage.removeItem(USER_KEY);
             localStorage.removeItem(USER_KEY);
         } catch (error) {
@@ -94,8 +67,5 @@ export const tokenStorage = {
     /**
      * Check if token exists and is likely valid
      */
-    hasToken: () => {
-        const token = tokenStorage.getToken();
-        return !!token && token.length > 0;
-    }
+    hasToken: () => !!tokenStorage.getUser()
 };

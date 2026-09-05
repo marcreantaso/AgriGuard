@@ -1,9 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
+import App from './App'
 import './index.css'
-import { initPerformanceMonitoring } from './utils/performanceMonitor.js'
-import { prefetchRoutes } from './utils/lazyLoad.js'
+import { initPerformanceMonitoring } from './utils/performanceMonitor'
+import { prefetchRoutes } from './utils/lazyLoad'
 
 // Initialize performance monitoring in development
 if (import.meta.env.DEV) {

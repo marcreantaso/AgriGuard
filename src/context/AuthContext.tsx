@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authApi } from '../utils/api';
 import { tokenStorage } from '../utils/tokenStorage';
 
-const AuthContext = createContext();
+const AuthContext = createContext<any>(null);
 
 export const useAuth = () => useContext(AuthContext);
 
@@ -19,9 +19,7 @@ export const AuthProvider = ({ children }) => {
 
             try {
                 const storedUser = tokenStorage.getUser();
-                const token = tokenStorage.getToken();
-
-                if (token && storedUser) {
+                if (storedUser) {
                     // Verify token is still valid
                     try {
                         const response = await authApi.verify();
@@ -53,9 +51,10 @@ export const AuthProvider = ({ children }) => {
         try {
             const response = await authApi.login(email, password);
             setUser(response.user);
+            tokenStorage.setUser(response.user);
             return response;
         } catch (err) {
-            setError(err.message || 'Login failed');
+            setError((err as Error).message || 'Login failed');
             setUser(null);
             throw err;
         } finally {
@@ -70,9 +69,10 @@ export const AuthProvider = ({ children }) => {
         try {
             const response = await authApi.signup(userData);
             setUser(response.user);
+            tokenStorage.setUser(response.user);
             return response;
         } catch (err) {
-            setError(err.message || 'Signup failed');
+            setError((err as Error).message || 'Signup failed');
             setUser(null);
             throw err;
         } finally {
@@ -87,6 +87,7 @@ export const AuthProvider = ({ children }) => {
         try {
             await authApi.logout();
             setUser(null);
+            tokenStorage.clear();
         } catch (err) {
             console.error('Logout error:', err);
             // Still clear user even if logout fails
@@ -102,7 +103,7 @@ export const AuthProvider = ({ children }) => {
             setUser(response.user);
             return response.user;
         } catch (err) {
-            setError(err.message || 'Update failed');
+            setError((err as Error).message || 'Update failed');
             throw err;
         }
     };
@@ -111,7 +112,7 @@ export const AuthProvider = ({ children }) => {
         try {
             return await authApi.changePassword(currentPassword, newPassword);
         } catch (err) {
-            setError(err.message || 'Password change failed');
+            setError((err as Error).message || 'Password change failed');
             throw err;
         }
     };

@@ -4,6 +4,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useNavigate } from 'react-router-dom';
 import { User, Lock, ArrowRight, Mail, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ApiError } from '../utils/api';
 
 const Login = () => {
     const { login, signup } = useAuth();
@@ -31,7 +32,15 @@ const Login = () => {
             }
             navigate('/');
         } catch (err) {
-            setError(err.message === 'User already exists' ? 'Account already exists' : t('login.invalid_creds'));
+            if (err instanceof ApiError) {
+                if (err.code === 'INVALID_CREDENTIALS') setError('The email or password is incorrect.');
+                else if (err.code === 'ACCOUNT_EXISTS') setError('An account with this email already exists.');
+                else if (err.code === 'VALIDATION_ERROR') setError(err.message);
+                else if (err.code === 'NETWORK_ERROR') setError('Unable to connect. Check your internet connection and try again.');
+                else setError('The service is temporarily unavailable. Please try again shortly.');
+            } else {
+                setError('Something went wrong. Please try again.');
+            }
         } finally {
             setLoading(false);
         }

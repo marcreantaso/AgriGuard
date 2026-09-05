@@ -4,6 +4,11 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+    server: {
+        proxy: {
+            '/api': 'http://localhost:3000'
+        }
+    },
     plugins: [
         react({
             // Enable automatic JSX runtime optimization
@@ -55,13 +60,7 @@ export default defineConfig({
             }
         },
         // Minify and optimize
-        minify: 'terser',
-        terserOptions: {
-            compress: {
-                drop_console: true, // Remove console logs in production
-                drop_debugger: true
-            }
-        },
+        minify: 'esbuild',
         // Target modern browsers
         target: 'esnext',
         // Increase chunk size limit for initial load
@@ -84,11 +83,4 @@ export default defineConfig({
         exclude: ['@tensorflow/tfjs']
     },
 
-    // Development server optimization
-    server: {
-        middlewareMode: false,
-        // Delay serving HTML files to improve reload performance
-        middlewareMode: false,
-        preTransformRequests: ['/index.html']
-    }
 })

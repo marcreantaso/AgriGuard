@@ -7,13 +7,20 @@
         "dev": "vite",
         "build": "vite build",
         "lint": "eslint .",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "dev:api": "vercel dev",
+        "typecheck": "npm run typecheck:api && tsc --noEmit --noCheck",
+        "typecheck:api": "tsc --noEmit -p tsconfig.server.json",
+        "db:generate": "drizzle-kit generate",
+        "db:migrate": "tsx scripts/migrate.ts",
+        "db:seed": "tsx scripts/seed.ts"
     },
     "dependencies": {
         "@emailjs/browser": "^4.3.3",
         "@tensorflow/tfjs": "^4.22.0",
         "clsx": "^2.1.0",
         "date-fns": "^3.3.1",
+        "dotenv": "^16.4.7",
         "framer-motion": "^11.0.3",
         "lucide-react": "^0.323.0",
         "react": "^18.2.0",
@@ -21,7 +28,12 @@
         "react-router-dom": "^6.22.0",
         "react-webcam": "^7.2.0",
         "sonner": "^1.4.0",
-        "tailwind-merge": "^2.2.1"
+        "tailwind-merge": "^2.2.1",
+        "@neondatabase/serverless": "^0.10.4",
+        "bcryptjs": "^2.4.3",
+        "drizzle-orm": "^0.36.4",
+        "jose": "^5.9.6"
+        ,"zod": "^3.24.1"
     },
     "devDependencies": {
         "@types/react": "^18.2.55",
@@ -35,6 +47,12 @@
         "postcss": "^8.4.35",
         "tailwindcss": "^3.4.1",
         "vite": "^5.1.0",
-        "vite-plugin-pwa": "^0.19.0"
+        "vite-plugin-pwa": "^0.19.0",
+        "@types/node": "^22.10.2",
+        "@vercel/node": "^3.2.28",
+        "drizzle-kit": "^0.27.2",
+        "tsx": "^4.19.2",
+        "typescript": "^5.7.2",
+        "vercel": "^39.2.2"
     }
 }

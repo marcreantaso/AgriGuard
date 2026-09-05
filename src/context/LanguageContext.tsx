@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { translations } from '../constants/translations';
 
-const LanguageContext = createContext();
+const LanguageContext = createContext<any>(null);
 
 export const useLanguage = () => useContext(LanguageContext);
 

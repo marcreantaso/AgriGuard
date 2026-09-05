@@ -1,267 +1,103 @@
-# 🌾 AgriGuard - Agricultural Disease Detection Platform
+# AgriGuard
 
-Secure, AI-powered agricultural disease detection system with comprehensive authentication.
+AgriGuard is a mobile-first agricultural IoT dashboard with crop analysis, sensor monitoring, alerts, analytics, marketplace tools, and field workflows. The existing dashboard UI is preserved while authentication and persistence have been rebuilt for a single Vercel deployment.
 
-## ✨ Features
+## Architecture
 
-- 🔍 **AI-Powered Disease Detection** - Real-time crop disease analysis using TensorFlow
-- 📱 **Mobile-First UI** - Responsive design optimized for field use
-- 🌍 **Multi-Language Support** - Support for multiple local languages
-- 📍 **Location Tracking** - Track field visits and scans by location
-- 💰 **Marketplace** - Buy and sell agricultural products
-- 📊 **Analytics** - Detailed crop health analytics and history
-- 🔐 **Secure Authentication** - JWT-based authentication with password hashing
-- ⚡ **Rate Limiting** - Protection against brute force attacks
-- 🚀 **Performance** - Built with Vite for optimal development and build times
+- Frontend: React, TypeScript, Vite, Tailwind, PWA
+- API: TypeScript Vercel serverless functions under `api/`
+- Database: Neon PostgreSQL through Drizzle ORM
+- Authentication: bcrypt password hashes and HTTP-only JWT session cookies
+- Browser API calls: relative `/api/...` routes, with no `VITE_API_URL`
 
-## 🚀 Quick Start
+The database schema in `db/schema.ts` defines `users`, `iot_devices`, `sensor_readings`, and `alerts`. The initial SQL migration is in `drizzle/0000_initial_schema.sql`.
 
-### Automated Setup (Recommended)
+## Environment
 
-**macOS/Linux:**
-```bash
-chmod +x setup.sh
-./setup.sh
-```
+Copy `.env.example` to `.env` for local work:
 
-**Windows:**
-```bash
-setup.bat
-```
-
-### Manual Setup
-
-**Terminal 1 - Backend:**
-```bash
-cd server
-npm install
-npm run dev
-```
-
-**Terminal 2 - Frontend:**
-```bash
-npm install
-npm run dev
-```
-
-### Login
-- **Email:** `farmer@agri.com`
-- **Password:** `AgriGuard123!`
-
-## 📖 Documentation
-
-### Getting Started
-- **[GETTING_STARTED.md](./GETTING_STARTED.md)** - Complete setup guide with troubleshooting
-- **[SECURITY_IMPLEMENTATION.md](./SECURITY_IMPLEMENTATION.md)** - Overview of all security improvements
-
-### Security
-- **[SECURITY.md](./SECURITY.md)** - Security architecture and best practices
-- **[FRONTEND_SECURITY.md](./FRONTEND_SECURITY.md)** - Frontend security implementation details
-- **[server/README.md](./server/README.md)** - Backend API documentation
-
-## 🏗️ Project Structure
-
-```
-AgriGuard/
-├── server/                 # Express.js backend (NEW)
-│   ├── routes/            # API routes
-│   ├── middleware/        # Authentication & rate limiting
-│   ├── utils/             # Password hashing, token generation
-│   └── README.md          # Backend documentation
-├── src/
-│   ├── context/           # React context (AuthContext UPDATED)
-│   ├── utils/             # API service & token storage (NEW)
-│   ├── pages/             # Page components
-│   ├── components/        # Reusable components
-│   └── constants/         # Constants & translations
-├── GETTING_STARTED.md     # Setup instructions (NEW)
-├── SECURITY.md            # Security overview (NEW)
-├── SECURITY_IMPLEMENTATION.md  # Implementation details (NEW)
-└── FRONTEND_SECURITY.md   # Frontend security (NEW)
-```
-
-## 🔐 Security Improvements
-
-### ✅ Implemented
-
-| Feature | Details |
-|---------|---------|
-| **Password Hashing** | bcrypt with 10 salt rounds |
-| **JWT Authentication** | 7-day token expiry |
-| **Rate Limiting** | 5 login attempts per 15 minutes |
-| **Secure Token Storage** | sessionStorage + localStorage backup |
-| **CORS Protection** | Whitelisted origins |
-| **Input Validation** | Server-side validation on all endpoints |
-| **Error Handling** | Generic error messages prevent info leakage |
-
-### 🆕 New Components
-
-- **Express.js Backend** - Centralized authentication server
-- **API Service Layer** - Automatic token injection & error handling
-- **Token Storage Manager** - Secure sessionStorage/localStorage handling
-- **Rate Limiting Middleware** - Brute force protection
-- **Password Validation** - Strength requirements enforcement
-
-## 🛠️ Technology Stack
-
-### Frontend
-- React 18.2
-- Vite 5
-- React Router 6
-- Tailwind CSS 3.4
-- Framer Motion
-- React Webcam
-- TensorFlow.js
-- Lucide Icons
-
-### Backend
-- Express.js 4
-- jsonwebtoken (JWT)
-- bcryptjs (Password hashing)
-- express-rate-limit
-- express-validator
-- CORS
-
-### Development Tools
-- ESLint
-- PostCSS & Autoprefixer
-- Nodemon
-
-## 📋 Prerequisites
-
-- **Node.js** 16+ ([Download](https://nodejs.org/))
-- **npm** or **yarn**
-- **Git** (optional)
-
-## 🧪 Test Credentials
-
-After setup, login with:
-```
-Email:    farmer@agri.com
-Password: AgriGuard123!
-```
-
-Create additional test accounts via signup.
-
-## 🔑 Environment Configuration
-
-### Frontend (.env)
 ```env
-VITE_API_URL=http://localhost:5000
-VITE_APP_NAME=AgriGuard
-```
-
-### Backend (server/.env)
-```env
-PORT=5000
+DATABASE_URL=postgresql://user:password@your-neon-host.neon.tech/agriguard?sslmode=require
+JWT_SECRET=replace-with-a-long-random-secret
 NODE_ENV=development
-JWT_SECRET=agriguard-dev-secret-change-in-production-12345
-JWT_EXPIRY=7d
-CORS_ORIGIN=http://localhost:5173
+DEMO_USER_PASSWORD=replace-with-a-local-only-demo-password
 ```
 
-**⚠️ WARNING:** Change `JWT_SECRET` in production!
+`DATABASE_URL` must be a PostgreSQL connection string from Neon. `JWT_SECRET` must be a private random string, not a URL. Never commit `.env`, database URLs, JWT secrets, or demo passwords.
 
-## 📊 API Documentation
+## Local development
 
-See [server/README.md](./server/README.md) for complete API documentation.
+Prerequisite: Node.js 20 or newer.
 
-### Key Endpoints
-- `POST /api/auth/login` - User login
-- `POST /api/auth/signup` - Create account
-- `POST /api/auth/verify` - Verify token
-- `PUT /api/auth/profile` - Update profile
-- `PUT /api/auth/password` - Change password
-
-## 🚀 Development
-
-### Available Scripts
-
-**Frontend:**
 ```bash
-npm run dev      # Start development server
-npm run build    # Build for production
-npm run preview  # Preview production build
-npm run lint     # Run ESLint
+npm install
+npm run db:migrate
+npm run db:seed
+npm run dev:api
 ```
 
-**Backend:**
+`npm run dev:api` starts the Vercel local runtime and serves the UI and `/api` routes from one project. Set `DEMO_USER_PASSWORD` before `npm run db:seed`; this creates `farmer@agri.com` without storing a password in source control.
+
+Useful checks:
+
 ```bash
-cd server
-npm run dev      # Start with auto-reload (nodemon)
-npm start        # Production start
+npm run typecheck
+npm run build
 ```
 
-## 🐛 Troubleshooting
+`npm run typecheck:api` runs strict TypeScript checking for the server, schema, database, and scripts. The complete application check also validates the preserved dashboard source syntax.
 
-### Backend won't start
-- Check Node.js version: `node -v` (requires 16+)
-- Ensure port 5000 is free
-- Check .env configuration
+## Neon database setup
 
-### Frontend won't connect
-- Verify backend is running on port 5000
-- Check VITE_API_URL in .env
-- Check browser console for errors
+1. Create a Neon project and copy its PostgreSQL connection string.
+2. Put it in local `.env` as `DATABASE_URL`.
+3. Run `npm run db:migrate` to create the four application tables.
+4. Set `DEMO_USER_PASSWORD` and run `npm run db:seed` only when a demo account is needed.
 
-### Login fails
-- Use correct credentials: `farmer@agri.com` / `AgriGuard123!`
-- Check backend logs for errors
-- Clear browser storage: DevTools → Application → Clear All
+To generate a new Drizzle migration after changing `db/schema.ts`:
 
-See [GETTING_STARTED.md](./GETTING_STARTED.md) for more troubleshooting.
+```bash
+npm run db:generate
+npm run db:migrate
+```
 
-## 🚢 Production Deployment
+## Authentication API
 
-### Security Checklist
-- [ ] Change JWT_SECRET to random value
-- [ ] Set NODE_ENV=production
-- [ ] Enable HTTPS/SSL
-- [ ] Migrate to persistent database
-- [ ] Implement httpOnly cookies
-- [ ] Add security headers (helmet.js)
-- [ ] Set up monitoring & logging
-- [ ] Configure WAF & rate limiting at CDN level
+- `POST /api/auth/signup`
+- `POST /api/auth/login`
+- `POST /api/auth/logout`
+- `POST /api/auth/verify`
+- `PUT /api/auth/profile`
+- `PUT /api/auth/password`
 
-See [SECURITY.md](./SECURITY.md) for complete production checklist.
+Validation, invalid credentials, network failures, and server/database failures are returned as distinct structured errors. The login screen displays an appropriate safe message for each category.
 
-## 📚 Learning Resources
+## Vercel deployment
 
-- [Express.js Guide](https://expressjs.com/)
-- [React Documentation](https://react.dev/)
-- [JWT Best Practices](https://tools.ietf.org/html/rfc8725)
-- [OWASP Security Guidelines](https://owasp.org/)
+1. Import the repository into Vercel.
+2. Keep the defaults in `vercel.json`; Vite builds to `dist` and `api/**/*.ts` becomes serverless functions.
+3. Add these Production and Preview environment variables in Vercel:
 
-## 🤝 Contributing
+```text
+DATABASE_URL=<Neon PostgreSQL connection string>
+JWT_SECRET=<long random private secret>
+NODE_ENV=production
+```
 
-1. Review security guidelines in [SECURITY.md](./SECURITY.md)
-2. Follow existing code style
-3. Test all authentication flows
-4. Document changes
+4. Deploy. No Express process, separate backend, CORS setting, or frontend API URL is required.
 
-## 📝 License
+Production cookies are `HttpOnly`, `Secure`, `SameSite=Lax`, and scoped to the application path. Secrets are read only from server environment variables.
 
-MIT License - See LICENSE file for details
+## Project layout
 
-## 🆘 Support
+```text
+api/auth/[...action].ts   Vercel authentication function
+db/schema.ts              Drizzle schema
+drizzle/                  SQL migrations
+lib/auth.ts               Cookie sessions and bcrypt helpers
+lib/db.ts                 Neon Drizzle client
+src/                      TypeScript React dashboard
+vercel.json               Vercel build and routing configuration
+```
 
-- 📖 Check [GETTING_STARTED.md](./GETTING_STARTED.md)
-- 🔐 Review [SECURITY.md](./SECURITY.md)
-- 🔧 See [SECURITY_IMPLEMENTATION.md](./SECURITY_IMPLEMENTATION.md)
-- 🌐 Backend docs in [server/README.md](./server/README.md)
-
-## 🎯 Next Steps
-
-1. **Setup** - Run `setup.sh` or `setup.bat`
-2. **Read** - Review [GETTING_STARTED.md](./GETTING_STARTED.md)
-3. **Test** - Try all authentication flows
-4. **Develop** - Customize for your needs
-5. **Deploy** - Follow [SECURITY.md](./SECURITY.md) production checklist
-
----
-
-**Version:** 0.2.0 (With Security Updates)  
-**Last Updated:** August 13, 2026  
-**Status:** 🟢 Ready for Development
-
-🌾 **Happy Farming with AgriGuard!** 🌾
+See [AUTH_TROUBLESHOOTING.md](AUTH_TROUBLESHOOTING.md) for the original failure analysis and migration context.
