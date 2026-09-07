@@ -1,10 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
-import { db } from '../../lib/db';
-import { alerts, users } from '../../db/schema';
-import { clearSessionCookie, comparePassword, createSession, getSessionUserId, hashPassword, setSessionCookie } from '../../lib/auth';
-import { publicUser, sendError } from '../../lib/http';
+import { db } from '../_lib/db';
+import { alerts, users } from '../_db/schema';
+import { clearSessionCookie, comparePassword, createSession, getSessionUserId, hashPassword, setSessionCookie } from '../_lib/auth';
+import { publicUser, sendError } from '../_lib/http';
 
 const signupSchema = z.object({ name: z.string().trim().min(2).max(120), email: z.string().trim().email().max(320), password: z.string().min(8).max(128) });
 const loginSchema = z.object({ email: z.string().trim().email(), password: z.string().min(1) });
