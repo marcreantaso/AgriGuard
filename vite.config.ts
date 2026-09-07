@@ -4,11 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    server: {
-        proxy: {
-            '/api': 'http://localhost:3000'
-        }
-    },
+    // No backend proxy needed anymore
     plugins: [
         react({
             // Enable automatic JSX runtime optimization
