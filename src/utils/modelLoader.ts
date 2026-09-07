@@ -92,6 +92,7 @@ export const predict = async (imageData) => {
         
         // Preprocess image
         let input = imageData;
+        const tf = await import('@tensorflow/tfjs');
         if (imageData instanceof HTMLImageElement || imageData instanceof HTMLCanvasElement) {
             input = await tf.browser.fromPixels(imageData);
         }

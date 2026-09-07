@@ -8,7 +8,7 @@
         "build": "vite build",
         "lint": "eslint .",
         "preview": "vite preview",
-        "dev:api": "vercel dev",
+        "dev:api": "npx vercel dev",
         "typecheck": "npm run typecheck:api && tsc --noEmit --noCheck",
         "typecheck:api": "tsc --noEmit -p tsconfig.server.json",
         "db:generate": "drizzle-kit generate",
