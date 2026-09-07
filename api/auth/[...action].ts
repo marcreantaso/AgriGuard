@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
-import { db } from '../_lib/db';
+import { getDb } from '../_lib/db';
 import { alerts, users } from '../_db/schema';
 import { clearSessionCookie, comparePassword, createSession, getSessionUserId, hashPassword, setSessionCookie } from '../_lib/auth';
 import { publicUser, sendError } from '../_lib/http';
@@ -15,6 +15,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Cache-Control', 'no-store');
   const action = Array.isArray(req.query.action) ? req.query.action[0] : req.query.action;
   try {
+    const db = getDb();
     if (req.method === 'POST' && action === 'signup') {
       const input = signupSchema.safeParse(req.body);
       if (!input.success) return sendError(res, 400, 'VALIDATION_ERROR', 'Check your name, email, and password.', input.error.flatten().fieldErrors);
