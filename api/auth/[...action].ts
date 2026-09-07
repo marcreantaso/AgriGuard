@@ -70,7 +70,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
     return sendError(res, 404, 'NOT_FOUND', 'Authentication route not found.');
   } catch (error) {
-    console.error('API error', error);
+    console.error('API error:', action, error instanceof Error ? error.message : error, error instanceof Error ? error.stack : '');
     return sendError(res, 500, 'SERVER_ERROR', 'The service is temporarily unavailable.');
   }
 }
